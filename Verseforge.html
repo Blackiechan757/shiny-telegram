@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VerseForge - Professional Poetry Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    .poetry-text {
+        font-family: Georgia, 'Times New Roman', serif;
+        white-space: pre-wrap;
+    }
+
+    .tab-active {
+        background: #f3e8ff;
+        color: #7c3aed;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #1f2937;
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        display: none;
+        z-index: 2000;
+        animation: slideIn 0.3s ease;
+    }
+
+    .toast.active {
+        display: block;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .idea-card {
+        transition: all 0.3s ease;
+    }
+
+    .idea-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-preview {
+        box-shadow: 0 0 0 4px #e5e7eb inset;
+        overflow-y: auto;
+    }
+
+    textarea:focus, input:focus, select:focus {
+        outline: none;
+        border-color: #7c3aed;
+        ring: 2px;
+        ring-color: #ddd6fe;
+    }
+</style>
+```
+
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+
+```
+<!-- Top Navigation -->
+<nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+        </div>
+        <div>
+            <h1 class="text-xl font-bold text-gray-800">VerseForge</h1>
+            <p class="text-xs text-gray-500">Professional Poetry Suite</p>
+        </div>
+    </div>
+    
+    <div class="flex items-center gap-4">
+        <button onclick="showShareModal()" class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+            </svg>
+            Share
+        </button>
+        <button onclick="showExportModal()" class="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export
+        </button>
+        <button onclick="showStoreModal()" class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+            </svg>
+            Store
+        </button>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="flex h-[calc(100vh-73px)]">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 p-4 overflow-y-auto">
+        <div class="space-y-2">
+            <button onclick="switchTab('write')" id="tab-write" class="tab-active w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                </svg>
+                <span class="font-medium">Writing Studio</span>
+            </button>
+            
+            <button onclick="switchTab('brainstorm')" id="tab-brainstorm" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+                <span class="font-medium">Idea Canvas</span>
+            </button>
+            
+            <button onclick="switchTab('research')" id="tab-research" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="font-medium">Research</span>
+            </button>
+            
+            <button onclick="switchTab('compile')" id="tab-compile" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+                <span class="font-medium">Book Compiler</span>
+            </button>
+            
+            <button onclick="switchTab('design')" id="tab-design" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                </svg>
+                <span class="font-medium">Design Studio</span>
+            </button>
+
+            <button onclick="switchTab('ai-tools')" id="tab-ai-tools" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                </svg>
+                <span class="font-medium">AI Assistant</span>
+            </button>
+            
+            <button onclick="switchTab('analytics')" id="tab-analytics" class="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="font-medium">Analytics</span>
+            </button>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-gray-200">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase mb-3">Recent Poems</h3>
+            <div id="recentPoemsList" class="space-y-1"></div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+        <!-- Writing Studio Tab -->
+        <div id="content-write" class="tab-content">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <input
+                            type="text"
+                            id="poemTitle"
+                            value="Untitled Poem"
+                            class="text-3xl font-bold border-none outline-none bg-transparent flex-1"
+                            placeholder="Untitled Poem"
+                        />
+                        <div class="flex gap-2">
+                            <button onclick="saveVersion()" class="p-2 hover:bg-gray-100 rounded-lg" title="Save Version">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                                </svg>
+                            </button>
+                            <button onclick="addCurrentPoemToBook()" class="p-2 hover:bg-gray-100 rounded-lg" title="Add to Book">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Constraint Mode -->
+                    <div class="mb-4 flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
+                        <label class="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="constraintMode"
+                                class="rounded"
+                                onchange="toggleConstraintMode()"
+                            />
+                            <span class="text-sm font-medium">Constraint Mode</span>
+                        </label>
+                        <div id="constraintOptions" class="flex gap-2 text-sm" style="display: none;">
+                            <input
+                                type="number"
+                                id="syllablesPerLine"
+                                placeholder="Syllables/line"
+                                class="w-32 px-2 py-1 border rounded"
+                            />
+                            <input
+                                type="text"
+                                id="rhymeScheme"
+                                placeholder="Rhyme (ABAB)"
+                                class="w-32 px-2 py-1 border rounded"
+                            />
+                        </div>
+                    </div>
+
+                    <textarea
+                        id="poemContent"
+                        class="w-full h-96 p-4 border-2 border-gray-200 rounded-lg focus:border-purple-500 poetry-text text-lg leading-relaxed resize-none"
+                        placeholder="Write your poetry here..."
+                    ></textarea>
+
+                    <div class="mt-4 flex items-center gap-4">
+                        <button onclick="readAloud()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                            </svg>
+                            Read Aloud
+                        </button>
+                        <button onclick="getAISuggestions()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                            AI Suggestions
+                        </button>
+                        <button onclick="showVersionHistory()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="versionCount">Version History (0)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brainstorm Tab -->
+        <div id="content-brainstorm" class="tab-content" style="display: none;">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Idea Canvas</h2>
+                    <button onclick="showNewIdeaModal()" class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Idea
+                    </button>
+                </div>
+
+                <div id="ideasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- Research Tab -->
+        <div id="content-research" class="tab-content" style="display: none;">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Research Library</h2>
+                    <button onclick="showNewResearchModal()" class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Research
+                    </button>
+                </div>
+
+                <div id="researchList" class="space-y-4"></div>
+            </div>
+        </div>
+
+        <!-- Compile Tab -->
+        <div id="content-compile" class="tab-content" style="display: none;">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Book Compiler</h2>
+                
+                <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <input
+                            type="text"
+                            id="bookTitle"
+                            value="My Poetry Collection"
+                            class="px-4 py-2 border rounded-lg"
+                            placeholder="Book Title"
+                        />
+                        <input
+                            type="text"
+                            id="bookAuthor"
+                            value="Author Name"
+                            class="px-4 py-2 border rounded-lg"
+                            placeholder="Author Name"
+                        />
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="font-semibold mb-2">Poems in Book (<span id="bookPoemCount">0</span>)</h3>
+                        <div id="bookSectionsList" class="space-y-2"></div>
+                    </div>
+
+                    <button onclick="generateBook()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg hover:from-purple-600 hover:to-indigo-600 transition-colors font-medium">
+                        Generate Complete Book
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Design Tab -->
+        <div id="content-design" class="tab-content" style="display: none;">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Design Studio</h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Design Controls -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">Book Customization</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Template</label>
+                                <select id="templateSelect" onchange="updatePreview()" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="minimal">Minimal</option>
+                                    <option value="gothic">Gothic</option>
+                                    <option value="nature">Nature</option>
+                                    <option value="modern">Modern</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Font Family</label>
+                                <select id="fontSelect" onchange="updatePreview()" class="w-full px-4 py-2 border rounded-lg">
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Garamond">Garamond</option>
+                                    <option value="Crimson Text">Crimson Text</option>
+                                    <option value="Merriweather">Merriweather</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Font Size: <span id="fontSizeValue">12</span>pt</label>
+                                <input
+                                    type="range"
+                                    id="fontSizeSlider"
+                                    min="10"
+                                    max="18"
+                                    value="12"
+                                    onchange="updatePreview()"
+                                    class="w-full"
+                                />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Line Spacing: <span id="lineSpacingValue">1.8</span></label>
+                                <input
+                                    type="range"
+                                    id="lineSpacingSlider"
+                                    min="1"
+                                    max="3"
+                                    step="0.1"
+                                    value="1.8"
+                                    onchange="updatePreview()"
+                                    class="w-full"
+                                />
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Cover Color</label>
+                                <input
+                                    type="color"
+                                    id="coverColorPicker"
+                                    value="#3a3a3a"
+                                    onchange="updatePreview()"
+                                    class="w-full h-12 rounded-lg cursor-pointer"
+                                />
+                            </div>
+
+                            <button onclick="generateAICover()" class="w-full py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                Generate Cover with AI
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <h3 class="font-bold text-lg mb-4">Live Preview</h3>
+                        <div 
+                            id="bookPreview"
+                            class="book-preview border-4 rounded-lg p-8 h-96 overflow-y-auto"
+                        >
+                            <h2 id="previewTitle" class="text-center mb-6"></h2>
+                            <p id="previewAuthor" class="text-center mb-8"></p>
+                            <div id="previewContent" class="poetry-text"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Tools Tab -->
+        <div id="content-ai-tools" class="tab-content" style="display: none;">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">AI Assistant</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div onclick="showToast('AI Theme Suggestions - Coming Soon!')" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                            <h3 class="font-bold text-lg">Theme Suggestions</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">Get AI-powered thematic depth suggestions and alternative word choices</p>
+                    </div>
+
+                    <div onclick="showToast('Readability Analysis - Coming Soon!')" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <h3 class="font-bold text-lg">Readability Analysis</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">Analyze your poem's accessibility and get suggestions for your target audience</p>
+                    </div>
+
+                    <div onclick="showToast('Style Comparison - Coming Soon!')" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                            <h3 class="font-bold text-lg">Style Comparison</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">Compare your style with historical poets and get influence reports</p>
+                    </div>
+
+                    <div onclick="showToast('Voice Synthesis - Coming Soon!')" class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow cursor-pointer">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                            </svg>
+                            <h3 class="font-bold text-lg">Voice Synthesis</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm">Generate production-quality spoken word recordings with prosodic control</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="content-analytics" class="tab-content" style="display: none;">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Analytics Dashboard</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Poems</p>
+                                <p class="text-3xl font-bold" id="totalPoemsCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Books Compiled</p>
+                                <p class="text-3xl font-bold" id="totalBooksCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Ideas Captured</p>
+                                <p class="text-3xl font-bold" id="totalIdeasCount">0</p>
+                            </div>
+                            <svg class="w-10 h-10 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="font-bold text-lg mb-4">Publishing & Sales</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="text-gray-700">Total Sales</span>
+                            <span class="font-bold text-xl">$0.00</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="text-gray-700">Social Media Shares</span>
+                            <span class="font-bold text-xl">0</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                            <span class="text-gray-700">Website Visits</span>
+                            <span class="font-bold text-xl">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast"></div>
+
+<!-- Share Modal -->
+<div id="shareModal" class="modal">
+    <div class="bg-white rounded-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold">Share Poetry</h3>
+            <button onclick="closeModal('shareModal')" class="p-2 hover:bg-gray-100 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mb-6 p-6 bg-gray-50 rounded-lg">
+            <h4 class="font-bold text-lg mb-2" id="sharePreviewTitle">Untitled</h4>
+            <p class="whitespace-pre-wrap mb-4 poetry-text" id="sharePreviewContent"></p>
+            <div class="flex flex-wrap gap-2" id="shareHashtags"></div>
+        </div>
+
+        <div class="space-y-3">
+            <button onclick="shareToSocial('Instagram')" class="w-full flex items-center justify-between p-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors">
+                <span class="font-medium">Share to Instagram</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+
+            <button onclick="shareToSocial('Twitter/X')" class="w-full flex items-center justify-between p-4 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <span class="font-medium">Share to X (Twitter)</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+
+            <button onclick="shareToSocial('Facebook')" class="w-full flex items-center justify-between p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <span class="font-medium">Share to Facebook</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+
+            <button onclick="shareToSocial('WordPress')" class="w-full flex items-center justify-between p-4 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <span class="font-medium">Publish to WordPress</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+            <div class="flex items-center gap-3 mb-3">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <h4 class="font-semibold">Schedule Post</h4>
+            </div>
+            <div class="flex gap-3">
+                <input type="datetime-local" class="flex-1 px-3 py-2 border rounded-lg" />
+                <button onclick="schedulePost()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Schedule
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export Modal -->
+<div id="exportModal" class="modal">
+    <div class="bg-white rounded-xl p-6 max-w-lg w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold">Export Options</h3>
+            <button onclick="closeModal('exportModal')" class="p-2 hover:bg-gray-100 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="space-y-3">
+            <button onclick="exportFormat('pdf')" class="w-full flex items-center justify-between p-4 bg-red-50 hover:bg-red-100 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <div class="text-left">
+                        <div class="font-medium">PDF</div>
+                        <div class="text-sm text-gray-500">Print-ready PDF/X format</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </button>
+
+            <button onclick="exportFormat('docx')" class="w-full flex items-center justify-between p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <div class="text-left">
+                        <div class="font-medium">Microsoft Word</div>
+                        <div class="text-sm text-gray-500">Standard manuscript format</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </button>
+
+            <button onclick="exportFormat('epub')" class="w-full flex items-center justify-between p-4 bg-green-50 hover:bg-green-100 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <div class="text-left">
+                        <div class="font-medium">EPUB</div>
+                        <div class="text-sm text-gray-500">E-reader compatible format</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </button>
+
+            <button onclick="exportFormat('scrivener')" class="w-full flex items-center justify-between p-4 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <div class="text-left">
+                        <div class="font-medium">Scrivener</div>
+                        <div class="text-sm text-gray-500">Export for Scrivener</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </button>
+
+            <button onclick="exportFormat('pages')" class="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <div class="text-left">
+                        <div class="font-medium">Apple Pages</div>
+                        <div class="text-sm text-gray-500">Export for Pages</div>
+                    </div>
+                </div>
+                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
+            <h4 class="font-semibold mb-2 flex items-center gap-2">
+                <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Print-on-Demand
+            </h4>
+            <div class="space-y-2">
+                <button onclick="uploadToPOD('KDP')" class="w-full py-2 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-100 text-sm">
+                    Upload to Amazon KDP
+                </button>
+                <button onclick="uploadToPOD('IngramSpark')" class="w-full py-2 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-100 text-sm">
+                    Upload to IngramSpark
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Store Modal -->
+<div id="storeModal" class="modal">
+    <div class="bg-white rounded-xl p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold">Store Setup</h3>
+            <button onclick="closeModal('storeModal')" class="p-2 hover:bg-gray-100 rounded-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="font-semibold text-lg">Products</h4>
+                <button onclick="addProduct()" class="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Add Product
+                </button>
+            </div>
+
+            <div id="productsList" class="space-y-3">
+                <div class="p-4 border rounded-lg flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-20 bg-gray-200 rounded flex items-center justify-center">
+                            <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h5 class="font-medium">Digital Ebook</h5>
+                            <p class="text-sm text-gray-500">EPUB & PDF format</p>
+                            <div class="flex items-center gap-4 mt-1">
+                                <span class="text-sm font-semibold text-green-600">$9.99</span>
+                                <span class="text-xs text-gray-400">ISBN: 978-3-16-148410-0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="p-2 hover:bg-gray-100 rounded-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-
+```
