@@ -1,196 +1,146 @@
 /* =========================================================
-   CHROMALEX: ROYAL OBSIDIAN EDITION
+   CHROMALEX: ROYAL OBSIDIAN (APP LAYOUT)
    ========================================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;700&display=swap');
 
 :root {
-    /* -- PALETTE: Royal Obsidian -- */
     --bg-deep: #050505;
-    --bg-gradient: linear-gradient(135deg, #000000 0%, #1a0b2e 100%); /* Black to Midnight Purple */
-    
-    /* -- GLASS: Dark & Luxurious -- */
-    --glass-bg: rgba(18, 18, 18, 0.75);
-    --glass-border: 1px solid rgba(212, 175, 55, 0.15); /* Subtle Gold */
+    --glass-bg: rgba(18, 18, 18, 0.85); /* Slightly more opaque for the drawer */
+    --glass-border: 1px solid rgba(212, 175, 55, 0.2);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-    --glass-shine: rgba(255, 255, 255, 0.03);
-
-    /* -- TEXT & ACCENTS -- */
     --text-main: #e5e5e5;
-    --text-muted: #a3a3a3;
-    --text-gold: #d4af37; /* Metallic Gold */
-    --accent-purple: #5b21b6; /* Royal Purple */
-    --accent-glow: 0 0 15px rgba(91, 33, 182, 0.4);
-
+    --text-gold: #d4af37;
+    --accent-purple: #5b21b6;
     --font-ui: 'Inter', sans-serif;
     --font-serif: 'Playfair Display', serif;
-    --font-header: 'Cinzel', serif; /* Cinematic headers */
+    --font-header: 'Cinzel', serif;
 }
 
-/* --- BASE & TYPOGRAPHY --- */
-
-body {
-    font-family: var(--font-ui);
-    background: var(--bg-deep);
-    background-image: var(--bg-gradient);
-    background-attachment: fixed;
+/* --- APP LAYOUT LOCK --- */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* THE KEY: Prevents whole-page scrolling */
+    background-color: var(--bg-deep);
     color: var(--text-main);
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    font-family: var(--font-ui);
 }
 
-h1, h2, h3, .brand-text {
-    font-family: var(--font-header);
-    letter-spacing: 0.05em;
-    color: var(--text-gold);
-}
-
-/* --- GLASSMORPHISM COMPONENTS --- */
-
-.glass-panel {
-    background: var(--glass-bg);
+/* --- DRAWER (SIDEBAR) --- */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 100; /* Above everything */
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: var(--glass-border);
-    box-shadow: var(--glass-shadow);
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
+    border-right: var(--glass-border);
+    transform: translateX(-100%); /* Hidden by default */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
 }
 
-/* Add a subtle top shine to panels */
-.glass-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+#sidebar.open {
+    transform: translateX(0); /* Slide in */
 }
 
-.glass-button {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-muted);
+/* Overlay to click-to-close */
+#drawerOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
     backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
-    border-radius: 8px;
-    font-family: var(--font-ui);
-    letter-spacing: 0.02em;
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+#drawerOverlay.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 
-.glass-button:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: var(--text-gold);
-    color: var(--text-gold);
-    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
-    transform: translateY(-1px);
+/* --- MAIN CONTENT AREA --- */
+#mainContent {
+    position: absolute;
+    inset: 0; /* Fill screen */
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at top right, #1a0b2e 0%, #000000 60%);
 }
 
-/* --- SIDEBAR & NAV --- */
-
-#sidebar {
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    border-right: 1px solid rgba(212, 175, 55, 0.1);
-    z-index: 50;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+/* Tab Content Areas */
+.tab-content {
+    flex-grow: 1;
+    overflow: hidden; /* Contain scroll to children */
+    padding: 1rem;
+    height: 100%;
+    display: none; /* JS toggles this */
 }
 
-.tab-btn {
-    color: var(--text-muted);
-    border: 1px solid transparent;
-    transition: all 0.3s;
-}
-.tab-btn:hover {
-    color: var(--text-main);
-    background: rgba(255, 255, 255, 0.03);
-}
-.tab-active {
-    background: rgba(91, 33, 182, 0.2) !important; /* Sheer Purple */
-    border: 1px solid rgba(91, 33, 182, 0.4) !important;
-    color: var(--text-gold) !important;
-    box-shadow: var(--accent-glow);
-}
-.tab-active .nav-text { color: var(--text-gold); }
-
-/* --- INPUTS (Textarea, etc.) --- */
-
-input, select, textarea {
-    background: rgba(0, 0, 0, 0.4) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    color: var(--text-main) !important;
-    border-radius: 8px !important;
-    transition: all 0.3s;
-}
-input:focus, select:focus, textarea:focus {
-    border-color: var(--text-gold) !important;
-    box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.2) !important;
-    background: rgba(0, 0, 0, 0.6) !important;
+/* --- GLASS PANELS & UI --- */
+.glass-panel {
+    background: var(--glass-bg);
+    border: var(--glass-border);
+    border-radius: 16px;
+    box-shadow: var(--glass-shadow);
+    display: flex;
+    flex-direction: column;
 }
 
-/* The Main Editor */
-#poemContent, #poemContentSimulated {
+/* The Editor Area - NO SCROLL ON BODY */
+#content-write .glass-panel {
+    height: 100%;
+}
+
+textarea#poemContent {
+    background: transparent;
+    color: #f3f3f3;
     font-family: var(--font-serif);
-    color: #f0f0f0; /* Crisp white for text */
     line-height: 1.8;
+    resize: none;
+    border: none;
+    padding: 1.5rem;
 }
+textarea:focus { outline: none; }
 
-/* --- ARCHITECT & LISTS --- */
+/* Custom Scrollbars */
+.custom-scrollbar {
+    overflow-y: auto;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 3px; }
 
-.architect-item {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: var(--text-muted);
-    border-radius: 12px;
-}
-.architect-item.type-section {
-    border-left: 3px solid var(--text-gold);
-    background: linear-gradient(90deg, rgba(212, 175, 55, 0.05), transparent);
-    color: var(--text-gold);
-}
-.architect-item.type-poem {
-    border-left: 3px solid var(--accent-purple);
-}
-
-/* --- TYPESETTER PREVIEW (Paper Simulation) --- */
-.book-page-simulation {
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-.paper-white { background-color: #e5e5e5; color: #111; } /* Dimmed slightly for dark mode contrast */
-.paper-cream { background-color: #e8e4d9; color: #2d2a26; }
-.paper-parchment { background-color: #dcd0b0; color: #3e3b32; }
+/* --- TYPOGRAPHY UTILS --- */
+h1, h2, h3 { font-family: var(--font-header); color: var(--text-gold); }
+.text-gold { color: var(--text-gold); }
+.border-gold-dim { border-color: rgba(212, 175, 55, 0.2); }
 
 /* --- ZEN MODE --- */
-body.zen-active #mainContent {
-    background: #080808; /* Pure deep black focus */
-}
-body.zen-active #poemContent {
-    color: #d4af37; /* Gold text in Zen Mode */
-}
+body.zen-active header { display: none; }
+body.zen-active #content-write { padding: 0; }
+body.zen-active .glass-panel { border: none; background: transparent; }
+body.zen-active #poemContent { padding: 10vh 20vw; font-size: 1.4rem; }
 
 /* --- TOAST & MODALS --- */
-#toast.active {
-    background: rgba(10, 10, 10, 0.9);
-    border: 1px solid var(--text-gold);
-    color: var(--text-gold);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+#toast.active { opacity: 1; transform: translate(-50%, -20px); }
+.modal { background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+.modal > div { background: #111; border: var(--glass-border); }
+
+/* Helpers */
+.glass-button {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: #ccc; transition: all 0.2s;
 }
-
-.modal > div {
-    background: rgba(15, 15, 15, 0.95);
-    border: 1px solid var(--text-gold);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.7);
+.glass-button:hover {
+    background: rgba(212, 175, 55, 0.1); border-color: var(--text-gold); color: var(--text-gold);
 }
-
-/* Hide scrollbars for cleaner look */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.4); }
-
-/* Tailwind Overrides for "Glass" classes in HTML */
-.bg-white { background: transparent !important; }
-.bg-gray-100, .bg-gray-50, .bg-gray-200 { background: rgba(255,255,255,0.03) !important; }
-.text-gray-700, .text-gray-800 { color: var(--text-main) !important; }
-.text-indigo-600 { color: var(--text-gold) !important; }
+.tab-active { background: rgba(91, 33, 182, 0.25); border: 1px solid rgba(91, 33, 182, 0.5); color: var(--text-gold); }
