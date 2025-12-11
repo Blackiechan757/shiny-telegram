@@ -1,146 +1,60 @@
-/* =========================================================
-   CHROMALEX: ROYAL OBSIDIAN (APP LAYOUT)
-   ========================================================= */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;700&display=swap');
 
 :root {
     --bg-deep: #050505;
-    --glass-bg: rgba(18, 18, 18, 0.85); /* Slightly more opaque for the drawer */
+    --glass-bg: rgba(18, 18, 18, 0.85);
     --glass-border: 1px solid rgba(212, 175, 55, 0.2);
     --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
     --text-main: #e5e5e5;
     --text-gold: #d4af37;
-    --accent-purple: #5b21b6;
     --font-ui: 'Inter', sans-serif;
     --font-serif: 'Playfair Display', serif;
     --font-header: 'Cinzel', serif;
 }
 
-/* --- APP LAYOUT LOCK --- */
-html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* THE KEY: Prevents whole-page scrolling */
-    background-color: var(--bg-deep);
-    color: var(--text-main);
-    font-family: var(--font-ui);
-}
+html, body { height: 100%; width: 100%; margin: 0; padding: 0; overflow: hidden; background: var(--bg-deep); color: var(--text-main); font-family: var(--font-ui); }
 
-/* --- DRAWER (SIDEBAR) --- */
+/* --- DRAWER --- */
 #sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    width: 280px;
-    z-index: 100; /* Above everything */
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-right: var(--glass-border);
-    transform: translateX(-100%); /* Hidden by default */
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 5px 0 25px rgba(0,0,0,0.5);
-    display: flex;
-    flex-direction: column;
+    position: fixed; top: 0; left: 0; bottom: 0; width: 280px; z-index: 100;
+    background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-right: var(--glass-border);
+    transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex; flex-direction: column;
 }
+#sidebar.open { transform: translateX(0); }
+#drawerOverlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+#drawerOverlay.active { opacity: 1; pointer-events: auto; }
 
-#sidebar.open {
-    transform: translateX(0); /* Slide in */
-}
+/* --- LAYOUT --- */
+#mainContent { position: absolute; inset: 0; display: flex; flex-direction: column; background: transparent; z-index: 10; }
+.tab-content { flex-grow: 1; overflow: hidden; padding: 1rem; height: 100%; display: none; }
+.glass-panel { background: var(--glass-bg); border: var(--glass-border); border-radius: 16px; box-shadow: var(--glass-shadow); display: flex; flex-direction: column; }
 
-/* Overlay to click-to-close */
-#drawerOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(4px);
-    z-index: 90;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-}
-#drawerOverlay.active {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-/* --- MAIN CONTENT AREA --- */
-#mainContent {
-    position: absolute;
-    inset: 0; /* Fill screen */
-    display: flex;
-    flex-direction: column;
-    background: radial-gradient(circle at top right, #1a0b2e 0%, #000000 60%);
-}
-
-/* Tab Content Areas */
-.tab-content {
-    flex-grow: 1;
-    overflow: hidden; /* Contain scroll to children */
-    padding: 1rem;
-    height: 100%;
-    display: none; /* JS toggles this */
-}
-
-/* --- GLASS PANELS & UI --- */
-.glass-panel {
-    background: var(--glass-bg);
-    border: var(--glass-border);
-    border-radius: 16px;
-    box-shadow: var(--glass-shadow);
-    display: flex;
-    flex-direction: column;
-}
-
-/* The Editor Area - NO SCROLL ON BODY */
-#content-write .glass-panel {
-    height: 100%;
-}
-
-textarea#poemContent {
-    background: transparent;
-    color: #f3f3f3;
-    font-family: var(--font-serif);
-    line-height: 1.8;
-    resize: none;
-    border: none;
-    padding: 1.5rem;
-}
+/* --- EDITOR --- */
+#content-write .glass-panel { height: 100%; }
+textarea#poemContent { background: transparent; color: #f3f3f3; font-family: var(--font-serif); line-height: 1.8; resize: none; border: none; padding: 1.5rem; }
 textarea:focus { outline: none; }
-
-/* Custom Scrollbars */
-.custom-scrollbar {
-    overflow-y: auto;
-}
+.custom-scrollbar { overflow-y: auto; }
 .custom-scrollbar::-webkit-scrollbar { width: 6px; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 3px; }
 
-/* --- TYPOGRAPHY UTILS --- */
-h1, h2, h3 { font-family: var(--font-header); color: var(--text-gold); }
-.text-gold { color: var(--text-gold); }
-.border-gold-dim { border-color: rgba(212, 175, 55, 0.2); }
+/* --- SENSORY --- */
+#dustCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.6; }
+.glass-button { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #ccc; transition: all 0.2s; }
+.glass-button:hover { background: rgba(212, 175, 55, 0.1); border-color: var(--text-gold); color: var(--text-gold); }
+.tab-active { background: rgba(91, 33, 182, 0.25); border: 1px solid rgba(91, 33, 182, 0.5); color: var(--text-gold); }
+
+/* --- TYPEWRITER MODE --- */
+.typewriter-active textarea { padding-top: 50vh; padding-bottom: 50vh; }
+.typewriter-active { scroll-behavior: smooth; }
 
 /* --- ZEN MODE --- */
 body.zen-active header { display: none; }
 body.zen-active #content-write { padding: 0; }
 body.zen-active .glass-panel { border: none; background: transparent; }
-body.zen-active #poemContent { padding: 10vh 20vw; font-size: 1.4rem; }
+body.zen-active #poemContent { padding: 10vh 20vw; font-size: 1.4rem; color: var(--text-gold); }
 
-/* --- TOAST & MODALS --- */
+/* --- UTILS --- */
 #toast.active { opacity: 1; transform: translate(-50%, -20px); }
 .modal { background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
 .modal > div { background: #111; border: var(--glass-border); }
-
-/* Helpers */
-.glass-button {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    color: #ccc; transition: all 0.2s;
-}
-.glass-button:hover {
-    background: rgba(212, 175, 55, 0.1); border-color: var(--text-gold); color: var(--text-gold);
-}
-.tab-active { background: rgba(91, 33, 182, 0.25); border: 1px solid rgba(91, 33, 182, 0.5); color: var(--text-gold); }
