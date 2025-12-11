@@ -1,6 +1,6 @@
 /* =========================================================
    CHROMA-LEX GLOBAL AND RESPONSIVE CSS
-   (Previously in index.html <style> block)
+   (Updated for Dark Mode and Constraints)
    ========================================================= */
 
 /* Global Font and Body Setup */
@@ -8,6 +8,44 @@ body {
     font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
     background-color: #f7f9fb;
     color: #333;
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+}
+
+/* Dark Mode Global Styles */
+body.dark {
+    background-color: #121212; /* Dark background */
+    color: #e0e0e0; /* Light text */
+}
+
+/* Apply dark mode to key components */
+.dark .bg-gray-800 { background-color: #1f2937; }
+.dark .text-white { color: #f3f4f6; }
+.dark .bg-white { background-color: #1f2937; }
+.dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.5); }
+.dark .text-gray-700 { color: #d1d5db; }
+/* Customize sidebar for dark mode */
+.dark #sidebar { background-color: #1f2937; border-right-color: #374151; }
+.dark .border-gray-700 { border-color: #374151; }
+.dark .text-gray-300 { color: #9ca3af; }
+.dark .text-gray-500 { color: #6b7280; }
+.dark .hover\:bg-gray-700:hover { background-color: #374151; }
+/* Modal background fix */
+.dark .modal > div { background-color: #1f2937; }
+
+/* Dark Mode specific for editor/palette */
+.dark #content-write .bg-white { background-color: #1f2937; }
+.dark #aiAssistantPalette { background-color: #1f2937; }
+.dark #realtimeStats { background-color: #111827; }
+.dark #poemTitle { background-color: transparent; color: #f3f4f6; border-bottom-color: #4b5563; }
+.dark #poemContent { color: #f3f4f6; }
+.dark .bg-gray-50 { background-color: #111827; }
+
+/* Toggle Switch Styling */
+#darkModeToggle:checked ~ .dot {
+    transform: translateX(100%);
+}
+.dark #darkModeToggle:checked ~ .dot {
+    background-color: #111827; /* Dark background dot when checked */
 }
 
 /* Modal Base Styles */
@@ -41,7 +79,7 @@ body {
     height: 100%;
     width: 250px;
     transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     z-index: 50;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
@@ -51,7 +89,7 @@ body {
 
 /* Main Content Padding/Shifting for Mobile */
 #mainContent {
-    transition: margin-left 0.3s ease-in-out;
+    transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
 /* Desktop Styles (lg breakpoint) */
@@ -59,9 +97,43 @@ body {
     #sidebar {
         transform: translateX(0);
         position: sticky;
+        width: 250px; /* Default expanded width */
     }
     #mainContent {
         margin-left: 250px; 
+    }
+
+    /* Collapsed Sidebar Styles */
+    #sidebar.collapsed {
+        width: 80px; /* Collapsed width */
+        overflow: hidden;
+    }
+    #sidebar.collapsed .nav-text {
+        display: none; /* Hide all text elements */
+    }
+    #sidebar.collapsed #sidebarTitle {
+        display: none; /* Hide title */
+    }
+    #sidebar.collapsed #bookTitle {
+        display: none; /* Hide input */
+    }
+    #sidebar.collapsed #mainNav {
+        padding: 4px; /* Tighten padding */
+    }
+    #sidebar.collapsed .tab-btn {
+        justify-content: center; /* Center icons */
+        padding: 0.75rem;
+    }
+    #mainContent.sidebar-collapsed {
+        margin-left: 80px; /* Shift main content for collapsed sidebar */
+    }
+    /* Rotate the collapse icon to point right when collapsed */
+    #sidebar.collapsed #collapseIcon {
+        transform: rotate(180deg);
+    }
+    /* Hide poem section when collapsed */
+    #sidebar.collapsed #poemListSection {
+        display: none;
     }
 }
 
@@ -84,9 +156,11 @@ body {
     transition: all 0.2s;
 }
 .tab-active {
-    border-color: #5b21b6; /* deep purple */
-    color: #5b21b6;
-    font-weight: 600;
+    background-color: #5b21b6 !important; /* deep purple background for active state */
+    color: white !important;
+}
+.tab-active .nav-text {
+    color: white !important;
 }
 .tab-content {
     display: none;
@@ -109,4 +183,15 @@ body {
 }
 #toast.active {
     opacity: 1;
+}
+
+/* Constraint Violation Highlighting */
+.constraint-violation {
+    background-color: rgba(255, 100, 100, 0.2); /* Light red background */
+    border-left: 3px solid #f87171; /* Red border for emphasis */
+    padding-left: 5px;
+    /* Ensure dark mode contrast */
+    .dark & {
+        background-color: rgba(255, 50, 50, 0.2); 
+    }
 }
