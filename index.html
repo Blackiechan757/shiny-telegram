@@ -14,58 +14,78 @@
 
     <div id="mobileOverlay" onclick="toggleMobileMenu()"></div>
 
-    <div id="sidebar" class="bg-gray-800 text-white flex flex-col w-[250px] lg:w-64">
-        <div class="p-6 border-b border-gray-700">
-            <h1 class="text-2xl font-extrabold text-purple-400">ChromaLex</h1>
-            <input type="text" id="bookTitle" value="Ephemeral Echoes" class="w-full bg-gray-700 mt-2 text-sm text-gray-300 p-1 rounded border border-gray-600 focus:border-purple-500" placeholder="Project Title">
+    <div id="sidebar" class="bg-gray-800 text-white flex flex-col w-[250px] lg:w-64 collapsed">
+        
+        <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+            <h1 id="sidebarTitle" class="text-2xl font-extrabold text-purple-400">ChromaLex</h1>
+            
+            <button onclick="toggleSidebarCollapse()" class="text-gray-400 hover:text-white lg:block hidden">
+                <svg id="collapseIcon" class="w-6 h-6 transform rotate-0 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path></svg>
+            </button>
         </div>
 
-        <nav class="flex-grow p-4 space-y-2">
-            <button id="tab-write" onclick="switchTab('write')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700 active">
+        <input type="text" id="bookTitle" value="Ephemeral Echoes" class="w-full bg-gray-700 text-sm text-gray-300 p-3 rounded-none border-b border-gray-600 focus:border-purple-500" placeholder="Project Title">
+
+
+        <nav id="mainNav" class="flex-grow p-4 space-y-2">
+            <div class="px-3 text-xs font-semibold uppercase text-gray-500 mb-2 nav-text">Modules</div>
+            <button id="tab-write" data-tab-id="write" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700 active">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21H3v-3.5L14.732 5.232z"></path></svg>
-                Writing Studio
+                <span class="nav-text">Writing Studio</span>
             </button>
-            <button id="tab-compile" onclick="switchTab('compile')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+             <button id="tab-compile" data-tab-id="compile" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                Book Compiler (<span id="bookPoemCount">0</span>)
+                <span class="nav-text">Book Compiler (<span id="bookPoemCount">0</span>)</span>
             </button>
-            <button id="tab-design" onclick="switchTab('design')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+            <button id="tab-design" data-tab-id="design" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21V3m0 0a9 9 0 009 9c0 4.97-4.03 9-9 9s-9-4.03-9-9a9 9 0 009-9z"></path></svg>
-                Design Studio
+                <span class="nav-text">Design Studio</span>
             </button>
-            <button id="tab-brainstorm" onclick="switchTab('brainstorm')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+            <button id="tab-brainstorm" data-tab-id="brainstorm" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                Idea Canvas
+                <span class="nav-text">Idea Canvas</span>
             </button>
-            <button id="tab-research" onclick="switchTab('research')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+            <button id="tab-research" data-tab-id="research" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13M3.328 14.394l9.333 4.382 9.333-4.382M3.328 9.606l9.333-4.382 9.333 4.382M12 2v20"></path></svg>
-                Research Library
+                <span class="nav-text">Research Library</span>
             </button>
-            <div class="h-4 border-t border-gray-700 my-2"></div>
-            <button id="tab-analytics" onclick="switchTab('analytics')" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+            <button id="tab-analytics" data-tab-id="analytics" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m-2-4v4m0-4h4m-4 0a2 2 0 00-2-2H9a2 2 0 00-2 2z"></path></svg>
-                Analytics
+                <span class="nav-text">Analytics</span>
+            </button>
+            <button id="tab-settings" onclick="showSettingsModal()" class="tab-btn w-full text-left p-3 rounded-lg flex items-center gap-3 text-gray-300 hover:bg-gray-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.748 2.378-1.748 2.804 0L14.444 8.78h3.908c1.55 0 2.155.975 1.344 2.214l-3.232 4.607a2.5 2.5 0 00-.81 2.977l1.096 3.635c.426 1.748-1.077 2.723-2.628 1.948L12 20.274l-3.328 1.664c-1.55.775-3.054-.2-2.628-1.948l1.096-3.635a2.5 2.5 0 00-.81-2.977l-3.232-4.607c-.81-.81-1.344-2.214-1.344-3.514h3.908L10.325 4.317z"></path></svg>
+                <span class="nav-text">Settings</span>
             </button>
         </nav>
         
+        <div id="poemListSection" class="flex-grow p-4 border-t border-gray-700">
+            <div class="px-3 text-xs font-semibold uppercase text-gray-500 mb-2 nav-text">Project Poems</div>
+            <div id="poemListContainer" class="space-y-2 overflow-y-auto max-h-96">
+                </div>
+            <button onclick="createNewPoem()" class="w-full py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 mt-2">
+                <span class="nav-text">+ New Poem</span>
+            </button>
+        </div>
+
         <div class="mt-auto p-4 border-t border-gray-700">
              <button onclick="showAnthologyModal()" class="w-full py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700">
-                Anthology Module
+                <span class="nav-text">Anthology Module</span>
             </button>
         </div>
     </div>
 
     <div id="mainContent" class="flex-grow flex flex-col">
-        <header class="bg-white shadow-md p-3 lg:p-4 flex justify-between items-center sticky top-0 z-30">
-            <h2 id="currentTabTitle" class="text-xl font-semibold text-gray-700">Writing Studio</h2>
+        <header class="bg-white shadow-md p-3 lg:p-4 flex justify-between items-center sticky top-0 z-30 dark:bg-gray-800">
+            <h2 id="currentTabTitle" class="text-xl font-semibold text-gray-700 dark:text-gray-200">Writing Studio</h2>
             
             <div class="flex items-center space-x-3">
-                <button onclick="saveVersion()" class="hidden sm:block p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm">Save <span id="versionCount"> (0)</span></button>
-                <button onclick="showVersionHistory()" class="hidden sm:block p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm">History</button>
+                <button onclick="saveVersion()" class="hidden sm:block p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">Save <span id="versionCount"> (0)</span></button>
+                <button onclick="showVersionHistory()" class="hidden sm:block p-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-sm dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">History</button>
                 <button onclick="showStoreModal()" class="hidden sm:block p-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 font-medium text-sm">Store Setup</button>
                 <button onclick="showExportModal()" class="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium text-sm">Export</button>
                 
-                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-gray-700">
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2 text-gray-700 dark:text-gray-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </div>
@@ -76,39 +96,58 @@
             <div id="content-write" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
-                        <input type="text" id="poemTitle" value="The Geometry of Grief" class="w-full text-2xl font-bold mb-4 focus:outline-none focus:ring-0 border-b pb-2">
-                        <textarea id="poemContent" class="w-full h-[60vh] text-lg leading-relaxed resize-none focus:outline-none focus:ring-0" placeholder="Start writing your poem here..."></textarea>
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6 dark:bg-gray-800">
+                        <input type="text" id="poemTitle" value="The Geometry of Grief" class="w-full text-2xl font-bold mb-4 focus:outline-none focus:ring-0 border-b pb-2 dark:bg-transparent dark:text-gray-200 dark:border-gray-600">
                         
-                        <div class="flex justify-between items-center mt-4 border-t pt-4">
+                        <div class="relative">
+                            <textarea id="poemContent" 
+                                class="w-full h-[60vh] text-lg leading-relaxed resize-none focus:outline-none focus:ring-0 absolute inset-0 z-10 bg-transparent text-transparent caret-black whitespace-pre-wrap p-4" 
+                                placeholder="Start writing your poem here..."></textarea>
+                            
+                            <div id="poemContentSimulated" 
+                                class="w-full h-[60vh] text-lg leading-relaxed resize-none focus:outline-none focus:ring-0 absolute inset-0 overflow-y-scroll pointer-events-none p-4" 
+                                style="padding: 1rem; line-height: 1.6;">
+                                </div>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-4 border-t pt-4 dark:border-gray-700">
                             <div class="flex space-x-4">
                                 <button onclick="readAloud()" class="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 text-sm">Read Aloud</button>
                                 <button onclick="showNewIdeaModal()" class="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 text-sm">Clip Idea</button>
                             </div>
                             
                             <div class="flex items-center space-x-2">
-                                <label class="text-sm font-medium text-gray-700">Constraint Mode</label>
+                                <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Constraint Mode</label>
                                 <input type="checkbox" id="constraintMode" onchange="toggleConstraintMode()" class="rounded text-purple-600">
                             </div>
                         </div>
 
-                        <div id="constraintOptions" style="display:none;" class="mt-4 p-4 border rounded-lg flex space-x-4 bg-purple-50">
-                            <input type="number" id="syllablesPerLine" oninput="updateConstraintSettings()" placeholder="Syllables/Line (e.g., 10)" class="px-3 py-2 border rounded-lg w-1/2 text-sm">
-                            <input type="text" id="rhymeScheme" oninput="updateConstraintSettings()" placeholder="Rhyme Scheme (e.g., ABAB)" class="px-3 py-2 border rounded-lg w-1/2 text-sm uppercase">
+                        <div id="constraintOptions" style="display:none;" class="mt-4 p-4 border rounded-lg flex space-x-4 bg-purple-50 dark:bg-purple-900/50 dark:border-purple-800">
+                            <input type="number" id="syllablesPerLine" oninput="updateConstraintSettings()" placeholder="Syllables/Line (e.g., 10)" class="px-3 py-2 border rounded-lg w-1/2 text-sm dark:bg-gray-700 dark:border-gray-600">
+                            <input type="text" id="rhymeScheme" oninput="updateConstraintSettings()" placeholder="Rhyme Scheme (e.g., ABAB)" class="px-3 py-2 border rounded-lg w-1/2 text-sm uppercase dark:bg-gray-700 dark:border-gray-600">
                         </div>
                     </div>
 
-                    <div id="aiAssistantPalette" class="lg:col-span-1 bg-white rounded-xl shadow-lg p-4">
-                         <h4 class="font-semibold text-lg mb-3">AI Refinement Palette</h4>
-                         <p class="text-sm text-gray-600">Real-time suggestions and structural analysis will appear here once content is entered.</p>
+                    <div id="aiAssistantPalette" class="lg:col-span-1 bg-white rounded-xl shadow-lg p-4 dark:bg-gray-800">
+                         <h4 class="font-semibold text-lg mb-3 dark:text-gray-200">AI Refinement Palette</h4>
+                         <div id="realtimeStats" class="space-y-2 mb-4 p-3 bg-gray-50 rounded-lg dark:bg-gray-900">
+                             <p class="text-sm dark:text-gray-300">Words: <span id="wordCount" class="font-bold">0</span> | Lines: <span id="lineCount" class="font-bold">0</span></p>
+                             <p class="text-sm dark:text-gray-300">Avg Syllables/Line: <span id="avgSyllables" class="font-bold">0</span></p>
+                             <p class="text-sm dark:text-gray-300">Predicted Tone: <span id="predictedTone" class="font-bold text-blue-600">--</span></p>
                          </div>
+                         
+                         <h5 class="font-semibold text-base mb-2 dark:text-gray-200">Linked Research Items</h5>
+                         <div id="linkedResearch" class="space-y-2 text-sm text-gray-700 p-2 border rounded-lg min-h-[50px] dark:text-gray-400 dark:border-gray-700">
+                            <p class="text-gray-500 italic dark:text-gray-500">No linked research found.</p>
+                         </div>
+                    </div>
                 </div>
             </div>
 
             <div id="content-compile" class="tab-content">
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold mb-4">Compilation Order (Drag to Reorder)</h3>
-                    <div id="compilationList" class="space-y-3 p-4 border rounded-lg min-h-[50vh] bg-gray-50">
+                <div class="bg-white rounded-xl shadow-lg p-6 dark:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-4 dark:text-gray-200">Compilation Order (Drag to Reorder)</h3>
+                    <div id="compilationList" class="space-y-3 p-4 border rounded-lg min-h-[50vh] bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
                         <p class="text-center text-gray-500 italic">No poems in the compilation yet.</p>
                     </div>
                     <button onclick="generateBook()" class="mt-4 py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
@@ -120,70 +159,70 @@
             <div id="content-design" class="tab-content">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     
-                    <div class="lg:col-span-2 bg-gray-200 rounded-xl p-6 flex justify-center items-center h-full">
-                        <div id="bookPreview" class="w-full max-w-xl p-8 bg-white border-4 border-gray-900 shadow-xl transition-all">
-                            <h3 id="previewTitle" class="text-xl font-serif font-bold text-center mb-2"></h3>
-                            <p id="previewAuthor" class="text-sm text-center italic text-gray-600 mb-6 border-b pb-2"></p>
-                            <p id="previewContent" class="whitespace-pre-wrap text-left transition-all"></p>
+                    <div class="lg:col-span-2 bg-gray-200 rounded-xl p-6 flex justify-center items-center h-full dark:bg-gray-900">
+                        <div id="bookPreview" class="w-full max-w-xl p-8 bg-white border-4 border-gray-900 shadow-xl transition-all dark:bg-gray-800 dark:border-gray-700">
+                            <h3 id="previewTitle" class="text-xl font-serif font-bold text-center mb-2 dark:text-gray-200"></h3>
+                            <p id="previewAuthor" class="text-sm text-center italic text-gray-600 mb-6 border-b pb-2 dark:text-gray-400 dark:border-gray-700"></p>
+                            <p id="previewContent" class="whitespace-pre-wrap text-left transition-all dark:text-gray-300"></p>
                         </div>
                     </div>
 
                     <div class="lg:col-span-1 space-y-6">
                         
-                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6">
-                            <h3 class="font-bold text-lg mb-4 text-purple-700">Typographic Control Panel</h3>
+                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 dark:bg-gray-800">
+                            <h3 class="font-bold text-lg mb-4 text-purple-700 dark:text-purple-400">Typographic Control Panel</h3>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Layout Template</label>
-                                    <select id="templateSelect" onchange="updatePreview()" class="w-full px-3 py-2 border rounded-lg">
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Layout Template</label>
+                                    <select id="templateSelect" onchange="updatePreview()" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                         <option value="minimal">Minimalist</option>
                                         <option value="gothic">Gothic Chapbook</option>
                                         <option value="modern">Modern Wide</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Font Family</label>
-                                    <select id="fontSelect" onchange="updatePreview()" class="w-full px-3 py-2 border rounded-lg">
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Font Family</label>
+                                    <select id="fontSelect" onchange="updatePreview()" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                         <option value="'Times New Roman', serif">Serif (TNR)</option>
                                         <option value="Georgia, serif">Serif (Georgia)</option>
                                         <option value="Arial, sans-serif">Sans-serif (Arial)</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-1 flex justify-between">
-                                        Font Size (pt) <span id="fontSizeValue" class="font-normal text-gray-500">12</span>
+                                    <label class="block text-sm font-medium mb-1 flex justify-between dark:text-gray-300">
+                                        Font Size (pt) <span id="fontSizeValue" class="font-normal text-gray-500 dark:text-gray-400">12</span>
                                     </label>
                                     <input type="range" id="fontSizeSlider" min="8" max="16" value="12" oninput="updateSliderValues(); updatePreview()" class="w-full">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-1 flex justify-between">
-                                        Line Spacing (Leading) <span id="lineSpacingValue" class="font-normal text-gray-500">1.5</span>
+                                    <label class="block text-sm font-medium mb-1 flex justify-between dark:text-gray-300">
+                                        Line Spacing (Leading) <span id="lineSpacingValue" class="font-normal text-gray-500 dark:text-gray-400">1.5</span>
                                     </label>
                                     <input type="range" id="lineSpacingSlider" min="1.0" max="2.0" step="0.1" value="1.5" oninput="updateSliderValues(); updatePreview()" class="w-full">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-1">Cover Color (Simulated Edge)</label>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Cover Color (Simulated Edge)</label>
                                     <input type="color" id="coverColorPicker" value="#1f2937" onchange="updatePreview()" class="w-full h-10 border rounded-lg">
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6">
-                            <h3 class="font-bold text-lg mb-4 flex items-center gap-2 text-blue-600">
+                        <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 dark:bg-gray-800">
+                            <h3 class="font-bold text-lg mb-4 flex items-center gap-2 text-blue-600 dark:text-blue-400">
                                 Social Media Graphics Studio
                             </h3>
                             <div class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">Target Platform / Ratio</label>
-                                    <select id="graphicRatio" class="w-full px-4 py-2 border rounded-lg">
+                                    <label class="block text-sm font-medium mb-2 dark:text-gray-300">Target Platform / Ratio</label>
+                                    <select id="graphicRatio" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                         <option value="square">Square (1:1 - Instagram/Facebook Feed)</option>
                                         <option value="story">Vertical (9:16 - Instagram Story/Reel)</option>
                                         <option value="twitter">Landscape (16:9 - Twitter Card)</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-2">Background Type</label>
-                                    <select id="graphicBackgroundType" class="w-full px-4 py-2 border rounded-lg">
+                                    <label class="block text-sm font-medium mb-2 dark:text-gray-300">Background Type</label>
+                                    <select id="graphicBackgroundType" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                         <option value="color">Solid Color (Uses Cover Color)</option>
                                         <option value="ai-image">AI Generated Image Prompt</option>
                                         <option value="upload">Custom Image Upload</option>
@@ -192,7 +231,7 @@
                                 <textarea
                                     id="aiImagePrompt"
                                     placeholder="AI Background Prompt (e.g., 'A hazy sunset over a desolate desert road')"
-                                    class="w-full p-2 border-2 border-gray-200 rounded-lg text-sm resize-none"
+                                    class="w-full p-2 border-2 border-gray-200 rounded-lg text-sm resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                                     rows="2"
                                 ></textarea>
                                 <button onclick="generateSocialGraphic()" class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center justify-center gap-2">
@@ -205,11 +244,17 @@
             </div>
 
             <div id="content-brainstorm" class="tab-content">
-                <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold mb-4">Idea Canvas (Non-Linear Fragments)</h3>
-                    <button onclick="showNewIdeaModal()" class="py-2 px-4 bg-pink-500 text-white rounded-lg hover:bg-pink-600 mb-4">
-                        + Capture New Idea
-                    </button>
+                <div class="bg-white rounded-xl shadow-lg p-6 dark:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-4 dark:text-gray-200">Idea Canvas (Non-Linear Fragments)</h3>
+                    
+                    <div class="flex space-x-4 mb-4">
+                        <button onclick="showNewIdeaModal()" class="py-2 px-4 bg-pink-500 text-white rounded-lg hover:bg-pink-600">
+                            + Capture New Idea
+                        </button>
+                        
+                        <input type="text" id="ideaFilterInput" oninput="loadIdeaCanvas()" placeholder="Filter ideas by keyword or tag..." class="flex-grow px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                    </div>
+
                     <div id="ideasGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[50vh]">
                         </div>
                 </div>
@@ -217,16 +262,16 @@
 
             <div id="content-research" class="tab-content">
                  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-4 md:p-6 h-full sticky top-4">
-                        <h3 class="font-bold text-xl mb-4 flex items-center gap-2 text-indigo-600">
+                    <div class="lg:col-span-1 bg-white rounded-xl shadow-lg p-4 md:p-6 h-full sticky top-4 dark:bg-gray-800">
+                        <h3 class="font-bold text-xl mb-4 flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
                             AI Contextual Research
                         </h3>
-                        <p class="text-sm text-gray-600 mb-4">Ask complex questions related to your current project. Results can be clipped to your library.</p>
+                        <p class="text-sm text-gray-600 mb-4 dark:text-gray-400">Ask complex questions related to your current project. Results can be clipped to your library.</p>
                         
                         <div class="space-y-4">
                             <textarea
                                 id="aiResearchQuery"
-                                class="w-full p-3 border-2 border-indigo-200 rounded-lg text-sm resize-none"
+                                class="w-full p-3 border-2 border-indigo-200 rounded-lg text-sm resize-none dark:bg-gray-700 dark:border-indigo-800 dark:text-gray-200"
                                 rows="4"
                                 placeholder="Ask for historical context, mythological references, thematic analysis, or linguistic details..."
                             ></textarea>
@@ -239,10 +284,10 @@
                                 <p>Analyzing context...</p>
                             </div>
                             
-                            <div id="aiResearchResults" class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 hidden">
-                                <h5 class="font-semibold mb-2">AI Response:</h5>
-                                <p id="aiResponseText" class="text-sm text-gray-700 whitespace-pre-wrap"></p>
-                                <button onclick="clipAIResearch()" class="mt-3 text-xs text-green-600 hover:underline">
+                            <div id="aiResearchResults" class="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200 hidden dark:bg-gray-900 dark:border-gray-700">
+                                <h5 class="font-semibold mb-2 dark:text-gray-200">AI Response:</h5>
+                                <p id="aiResponseText" class="text-sm text-gray-700 whitespace-pre-wrap dark:text-gray-400"></p>
+                                <button onclick="clipAIResearch()" class="mt-3 text-xs text-green-600 hover:underline dark:text-green-400">
                                     Clip to Research Library
                                 </button>
                             </div>
@@ -251,7 +296,7 @@
                     
                     <div class="lg:col-span-2">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-xl text-gray-800">Your Clipped Research Items</h3>
+                            <h3 class="font-bold text-xl text-gray-800 dark:text-gray-200">Your Clipped Research Items</h3>
                             <button onclick="showResearchModal()" class="py-1 px-3 bg-green-500 text-white text-sm rounded-lg hover:bg-green-600">
                                 + Clip New Item
                             </button>
@@ -263,44 +308,44 @@
             </div>
 
             <div id="content-analytics" class="tab-content">
-                 <div class="bg-white rounded-xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold mb-6">Sales & Readership Dashboard</h3>
+                 <div class="bg-white rounded-xl shadow-lg p-6 dark:bg-gray-800">
+                    <h3 class="text-xl font-bold mb-6 dark:text-gray-200">Sales & Readership Dashboard</h3>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-                            <p class="text-sm font-medium text-gray-500">Avg Line Completion</p>
-                            <p id="kpiAvgCompletion" class="text-2xl font-bold text-green-700">--%</p>
+                        <div class="p-4 bg-green-50 rounded-lg border-l-4 border-green-500 dark:bg-green-900/50 dark:border-green-700">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg Line Completion</p>
+                            <p id="kpiAvgCompletion" class="text-2xl font-bold text-green-700 dark:text-green-300">--%</p>
                         </div>
-                         <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                            <p class="text-sm font-medium text-gray-500">Most Read Poem</p>
-                            <p id="kpiMostRead" class="text-lg font-bold text-blue-700 truncate">--</p>
+                         <div class="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500 dark:bg-blue-900/50 dark:border-blue-700">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Most Read Poem</p>
+                            <p id="kpiMostRead" class="text-lg font-bold text-blue-700 truncate dark:text-blue-300">--</p>
                         </div>
-                        <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500">
-                            <p class="text-sm font-medium text-gray-500">Total Social Shares</p>
-                            <p id="kpiTotalShares" class="text-2xl font-bold text-purple-700">0</p>
+                        <div class="p-4 bg-purple-50 rounded-lg border-l-4 border-purple-500 dark:bg-purple-900/50 dark:border-purple-700">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Social Shares</p>
+                            <p id="kpiTotalShares" class="text-2xl font-bold text-purple-700 dark:text-purple-300">0</p>
                         </div>
-                        <div class="p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-                            <p class="text-sm font-medium text-gray-500">Social Clicks</p>
-                            <p id="kpiTotalClicks" class="text-2xl font-bold text-red-700">0</p>
+                        <div class="p-4 bg-red-50 rounded-lg border-l-4 border-red-500 dark:bg-red-900/50 dark:border-red-700">
+                            <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Social Clicks</p>
+                            <p id="kpiTotalClicks" class="text-2xl font-bold text-red-700 dark:text-red-300">0</p>
                         </div>
                     </div>
 
-                    <div id="salesGraph" class="mb-8 p-4 bg-gray-50 rounded-lg">
+                    <div id="salesGraph" class="mb-8 p-4 bg-gray-50 rounded-lg dark:bg-gray-900">
                         </div>
 
-                    <h4 class="font-semibold text-xl mb-4 text-gray-700">Distribution Performance</h4>
+                    <h4 class="font-semibold text-xl mb-4 text-gray-700 dark:text-gray-200">Distribution Performance</h4>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-900">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Channel</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Units</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Royalty %</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Revenue Share</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Channel</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Units</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Revenue</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Royalty %</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase dark:text-gray-400">Revenue Share</th>
                                 </tr>
                             </thead>
-                            <tbody id="distributionTableBody" class="bg-white divide-y divide-gray-200">
+                            <tbody id="distributionTableBody" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                                 </tbody>
                         </table>
                     </div>
@@ -310,32 +355,32 @@
     </div>
 
     <div id="exportModal" class="modal">
-        <div class="bg-white rounded-xl p-6 md:p-8 max-w-4xl w-full shadow-2xl">
+        <div class="bg-white rounded-xl p-6 md:p-8 max-w-4xl w-full shadow-2xl dark:bg-gray-800 dark:text-gray-200">
              <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Export Manuscript & Book Files</h3>
-                <button onclick="closeExportModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Export Manuscript & Book Files</h3>
+                <button onclick="closeExportModal()" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-400">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
             <div class="space-y-6">
-                <div class="border p-4 rounded-lg bg-red-50/50">
-                    <h4 class="font-semibold text-lg mb-3 flex items-center gap-2 text-red-700">
+                <div class="border p-4 rounded-lg bg-red-50/50 dark:bg-red-900/50 dark:border-red-700">
+                    <h4 class="font-semibold text-lg mb-3 flex items-center gap-2 text-red-700 dark:text-red-300">
                         Manuscript Submission (.DOCX)
                     </h4>
-                    <p class="text-sm text-gray-600 mb-4">Reformats the entire book into standard publishing submission format.</p>
+                    <p class="text-sm text-gray-600 mb-4 dark:text-gray-400">Reformats the entire book into standard publishing submission format.</p>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium mb-1">Citation Style</label>
-                            <select id="manuscriptStyle" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">Citation Style</label>
+                            <select id="manuscriptStyle" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                 <option value="mla">Standard Manuscript (12pt TNR, Double-spaced)</option>
                                 <option value="chicago">Academic (Chicago Style)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1">Metadata Inclusion</label>
-                            <select id="manuscriptMetadata" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">Metadata Inclusion</label>
+                            <select id="manuscriptMetadata" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                 <option value="full">Full (Header/Footer with Name/Title/Page #)</option>
                                 <option value="basic">Basic (Page Numbers Only)</option>
                             </select>
@@ -343,36 +388,36 @@
                     </div>
                 </div>
 
-                <div class="border p-4 rounded-lg bg-green-50/50">
-                    <h4 class="font-semibold text-lg mb-3 flex items-center gap-2 text-green-700">
+                <div class="border p-4 rounded-lg bg-green-50/50 dark:bg-green-900/50 dark:border-green-700">
+                    <h4 class="font-semibold text-lg mb-3 flex items-center gap-2 text-green-700 dark:text-green-300">
                         Final Production Files (.PDF & .EPUB)
                     </h4>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-sm font-medium mb-1">Print PDF Quality</label>
-                            <select id="printQuality" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">Print PDF Quality</label>
+                            <select id="printQuality" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                 <option value="pdfx">High-Quality PDF/X (Print-Ready)</option>
                                 <option value="standard">Standard PDF (Online Sharing)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1">EPUB Standard</label>
-                            <select id="epubStandard" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">EPUB Standard</label>
+                            <select id="epubStandard" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                 <option value="epub3">EPUB 3 (Supports cinematic effects)</option>
                                 <option value="epub2">EPUB 2 (Max compatibility)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium mb-1">DRM/Watermarking</label>
-                            <select id="drmOption" class="w-full px-3 py-2 border rounded-lg">
+                            <label class="block text-sm font-medium mb-1 dark:text-gray-300">DRM/Watermarking</label>
+                            <select id="drmOption" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                                 <option value="none">No Protection</option>
                                 <option value="social">Social DRM (Watermarking)</option>
                                 <option value="adobe">Adobe DRM (Requires License)</option>
                             </select>
                         </div>
                     </div>
-                    <p class="mt-3 text-xs text-gray-500">
+                    <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
                         <span class="font-bold">Note:</span> Print exports will use the current settings from the Design Studio.
                     </p>
                 </div>
@@ -385,67 +430,67 @@
     </div>
     
     <div id="storeModal" class="modal">
-        <div class="bg-white rounded-xl p-6 md:p-8 max-w-4xl w-full shadow-2xl">
+        <div class="bg-white rounded-xl p-6 md:p-8 max-w-4xl w-full shadow-2xl dark:bg-gray-800 dark:text-gray-200">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-purple-700">ChromaLex Store Setup & Product Definition</h3>
-                <button onclick="closeStoreModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 class="text-2xl font-bold text-purple-700 dark:text-purple-400">ChromaLex Store Setup & Product Definition</h3>
+                <button onclick="closeStoreModal()" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-400">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <p class="text-gray-600 mb-6">Define the formats, pricing, and distribution channels for your poetry collection.</p>
+            <p class="text-gray-600 mb-6 dark:text-gray-400">Define the formats, pricing, and distribution channels for your poetry collection.</p>
 
             <div class="space-y-6">
 
                 <div>
-                    <label class="block text-sm font-medium mb-2">Poetry Collection to Sell</label>
-                    <select id="productPoemSelection" class="w-full px-4 py-2 border rounded-lg">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-300">Poetry Collection to Sell</label>
+                    <select id="productPoemSelection" class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
                         <option value="current">Current Project (Ephemeral Echoes)</option> 
                     </select>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border p-4 rounded-lg bg-purple-50">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 border p-4 rounded-lg bg-purple-50 dark:bg-purple-900/50 dark:border-purple-700">
                     <div class="col-span-3">
-                        <h4 class="font-semibold text-base mb-2 text-purple-700">Pricing and Royalty</h4>
+                        <h4 class="font-semibold text-base mb-2 text-purple-700 dark:text-purple-400">Pricing and Royalty</h4>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Ebook Price (USD)</label>
-                        <input type="number" id="ebookPrice" value="4.99" min="0.99" step="0.01" class="w-full px-3 py-2 border rounded-lg" placeholder="4.99">
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Ebook Price (USD)</label>
+                        <input type="number" id="ebookPrice" value="4.99" min="0.99" step="0.01" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="4.99">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Print Price (USD)</label>
-                        <input type="number" id="printPrice" value="12.99" min="5.00" step="0.01" class="w-full px-3 py-2 border rounded-lg" placeholder="12.99">
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Print Price (USD)</label>
+                        <input type="number" id="printPrice" value="12.99" min="5.00" step="0.01" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="12.99">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-1">Your Royalty %</label>
-                        <input type="number" id="royaltyRate" value="70" min="0" max="100" class="w-full px-3 py-2 border rounded-lg" placeholder="70">
+                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Your Royalty %</label>
+                        <input type="number" id="royaltyRate" value="70" min="0" max="100" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="70">
                     </div>
                 </div>
 
-                <div class="border p-4 rounded-lg bg-purple-50">
-                    <h4 class="font-semibold text-base mb-2 text-purple-700">Distribution Channels</h4>
+                <div class="border p-4 rounded-lg bg-purple-50 dark:bg-purple-900/50 dark:border-purple-700">
+                    <h4 class="font-semibold text-base mb-2 text-purple-700 dark:text-purple-400">Distribution Channels</h4>
                     <div class="space-y-2">
                         <label class="flex items-center gap-3">
                             <input type="checkbox" id="channelAmazon" checked class="rounded text-purple-600">
-                            <span class="text-gray-700">Amazon KDP (Ebook & Print-on-Demand)</span>
+                            <span class="text-gray-700 dark:text-gray-300">Amazon KDP (Ebook & Print-on-Demand)</span>
                         </label>
                         <label class="flex items-center gap-3">
                             <input type="checkbox" id="channelIngram" class="rounded text-purple-600">
-                            <span class="text-gray-700">IngramSpark (Global Distribution, Libraries)</span>
+                            <span class="text-gray-700 dark:text-gray-300">IngramSpark (Global Distribution, Libraries)</span>
                         </label>
                         <label class="flex items-center gap-3">
                             <input type="checkbox" id="channelChromaLex" checked class="rounded text-purple-600">
-                            <span class="text-gray-700">ChromaLex Direct Store (Highest Royalty)</span>
+                            <span class="text-gray-700 dark:text-gray-300">ChromaLex Direct Store (Highest Royalty)</span>
                         </label>
                     </div>
-                    <p class="mt-3 text-xs text-gray-500">Choosing a channel will use the corresponding export and metadata settings.</p>
+                    <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">Choosing a channel will use the corresponding export and metadata settings.</p>
                 </div>
                 
-                <div class="border p-4 rounded-lg bg-purple-50">
-                    <h4 class="font-semibold text-base mb-2 text-purple-700">Identifiers</h4>
-                    <label class="block text-sm font-medium mb-1">ISBN for Print Edition (Optional)</label>
-                    <input type="text" id="productIsbn" placeholder="978-1-23456-789-X" class="w-full px-3 py-2 border rounded-lg">
-                    <p class="mt-1 text-xs text-gray-500">Leaving this blank will prompt the system to assign a free ChromaLex ISBN.</p>
+                <div class="border p-4 rounded-lg bg-purple-50 dark:bg-purple-900/50 dark:border-purple-700">
+                    <h4 class="font-semibold text-base mb-2 text-purple-700 dark:text-purple-400">Identifiers</h4>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">ISBN for Print Edition (Optional)</label>
+                    <input type="text" id="productIsbn" placeholder="978-1-23456-789-X" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Leaving this blank will prompt the system to assign a free ChromaLex ISBN.</p>
                 </div>
 
                 <button onclick="defineProduct()" class="w-full py-3 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition-colors">
@@ -456,26 +501,26 @@
     </div>
     
     <div id="researchModal" class="modal">
-        <div class="bg-white rounded-xl p-6 md:p-8 max-w-lg w-full shadow-2xl">
+        <div class="bg-white rounded-xl p-6 md:p-8 max-w-lg w-full shadow-2xl dark:bg-gray-800 dark:text-gray-200">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800">Clip New Research Item</h3>
-                <button onclick="closeResearchModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200">Clip New Research Item</h3>
+                <button onclick="closeResearchModal()" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-400">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1">Source URL (Optional)</label>
-                    <input type="url" id="researchUrl" class="w-full px-3 py-2 border rounded-lg" placeholder="https://www.example.com/source">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Source URL (Optional)</label>
+                    <input type="url" id="researchUrl" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="https://www.example.com/source">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">Clipped Text / Note</label>
-                    <textarea id="researchText" class="w-full p-3 border rounded-lg resize-none" rows="5" placeholder="Paste the key passage or your note here..."></textarea>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Clipped Text / Note</label>
+                    <textarea id="researchText" class="w-full p-3 border rounded-lg resize-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" rows="5" placeholder="Paste the key passage or your note here..."></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium mb-1">Keywords (Comma Separated)</label>
-                    <input type="text" id="researchKeywords" class="w-full px-3 py-2 border rounded-lg" placeholder="metaphor, history, 1950s">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Keywords (Comma Separated)</label>
+                    <input type="text" id="researchKeywords" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="metaphor, history, 1950s">
                 </div>
                 
                 <button onclick="addNewResearchItem()" class="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold">
@@ -486,29 +531,72 @@
     </div>
 
     <div id="anthologyModal" class="modal">
-        <div class="bg-white rounded-xl p-6 md:p-8 max-w-2xl w-full shadow-2xl">
+        <div class="bg-white rounded-xl p-6 md:p-8 max-w-2xl w-full shadow-2xl dark:bg-gray-800 dark:text-gray-200">
              <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-800">Anthology Creation Module</h3>
-                <button onclick="closeAnthologyModal()" class="text-gray-500 hover:text-gray-800">
+                <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-200">Anthology Creation Module</h3>
+                <button onclick="closeAnthologyModal()" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-400">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <p class="text-gray-600 mb-6">Combine multiple completed projects (books) into a single, master anthology for publication.</p>
+            <p class="text-gray-600 mb-6 dark:text-gray-400">Combine multiple completed projects (books) into a single, master anthology for publication.</p>
 
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium mb-1">Anthology Title</label>
-                    <input type="text" id="anthologyTitle" class="w-full px-3 py-2 border rounded-lg" placeholder="The Collected Works of [Your Name]">
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Anthology Title</label>
+                    <input type="text" id="anthologyTitle" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200" placeholder="The Collected Works of [Your Name]">
                 </div>
 
-                <h4 class="font-semibold text-lg mt-6">Select Projects to Include</h4>
-                <div id="projectSelectionList" class="space-y-3 p-4 border rounded-lg max-h-64 overflow-y-auto bg-gray-50">
+                <h4 class="font-semibold text-lg mt-6 dark:text-gray-200">Select Projects to Include</h4>
+                <div id="projectSelectionList" class="space-y-3 p-4 border rounded-lg max-h-64 overflow-y-auto bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
                     </div>
                 
                 <button onclick="createAnthology()" class="w-full py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 font-semibold">
                     Generate Master Anthology Project
                 </button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="settingsModal" class="modal">
+        <div class="bg-white rounded-xl p-6 md:p-8 max-w-lg w-full shadow-2xl transition-all dark:bg-gray-800 dark:text-gray-200">
+             <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">User Settings & Preferences</h3>
+                <button onclick="closeSettingsModal()" class="text-gray-500 hover:text-gray-800 dark:hover:text-gray-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <div class="flex justify-between items-center border-b pb-4 dark:border-gray-700">
+                    <span class="text-lg font-medium">Appearance (Dark Mode)</span>
+                    <label for="darkModeToggle" class="flex items-center cursor-pointer">
+                        <div class="relative">
+                            <input type="checkbox" id="darkModeToggle" class="sr-only" onchange="toggleDarkMode()">
+                            <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition dark:bg-gray-900"></div>
+                        </div>
+                    </label>
+                </div>
+                
+                <div class="border-b pb-4 dark:border-gray-700">
+                    <label class="block text-lg font-medium mb-2">Autosave Interval</label>
+                    <select id="autosaveInterval" onchange="updateSettings()" class="w-full px-3 py-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                        <option value="2000">2 seconds (High Frequency)</option>
+                        <option value="5000">5 seconds (Standard)</option>
+                        <option value="10000">10 seconds (Low Frequency)</option>
+                    </select>
+                    <p class="text-sm text-gray-500 mt-1 dark:text-gray-400">Adjust the delay before content is saved to your browser.</p>
+                </div>
+                
+                <div>
+                     <h4 class="text-lg font-medium mb-2">Keyboard Shortcuts</h4>
+                     <ul id="shortcutList" class="space-y-2 text-sm">
+                        <li class="flex justify-between items-center"><span>Save Version</span><kbd class="px-2 py-1 bg-gray-200 rounded text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ctrl/Cmd + S</kbd></li>
+                        <li class="flex justify-between items-center"><span>New Poem</span><kbd class="px-2 py-1 bg-gray-200 rounded text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ctrl/Cmd + Shift + N</kbd></li>
+                        <li class="flex justify-between items-center"><span>Export Modal</span><kbd class="px-2 py-1 bg-gray-200 rounded text-gray-800 dark:bg-gray-700 dark:text-gray-300">Ctrl/Cmd + E</kbd></li>
+                     </ul>
+                </div>
             </div>
         </div>
     </div>
