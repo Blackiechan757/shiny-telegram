@@ -63,20 +63,27 @@ function loadData() {
 
 // --- TABS & UI ---
 function switchTab(tabId) {
+    // Hide all contents
     document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-    const content = document.getElementById(`content-${tabId}`);
-    if(content) content.style.display = 'block';
     
+    // Show specific content
+    const content = document.getElementById(`content-${tabId}`);
+    if(content) content.style.display = 'block'; // Use block, flex handles internal layout
+    
+    // Update Active Tab State
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('tab-active'));
     document.querySelector(`[data-tab-id="${tabId}"]`)?.classList.add('tab-active');
     
+    // Update Header Title
     document.getElementById('currentTabTitle').textContent = tabId.charAt(0).toUpperCase() + tabId.slice(1);
     
+    // Initialize specific module logic
     if(tabId === 'compile') renderArchitectList();
     if(tabId === 'design') loadDesignStudio();
     if(tabId === 'analytics') loadAnalytics();
     
-    if(window.innerWidth < 1024) document.getElementById('sidebar').classList.remove('open');
+    // NOTE: We do NOT toggle drawer here automatically anymore in JS, 
+    // because we added onclick="toggleDrawer()" directly to the buttons in HTML.
 }
 
 function toggleMobileMenu() {
