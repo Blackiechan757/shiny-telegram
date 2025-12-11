@@ -107,11 +107,37 @@ function loadPoem(id) {
 
 function updateStats() {
     const text = document.getElementById('poemContent').value;
-    document.getElementById('wordCount').textContent = text.trim().split(/\s+/).length;
-    document.getElementById('lineCount').textContent = text.split('\n').length;
-    // Simulate tone
-    const tones = ['Melancholy', 'Hopeful', 'Stoic', 'Whimsical'];
-    document.getElementById('predictedTone').textContent = tones[text.length % 4];
+    const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
+    const lines = text.split('\n').length;
+    
+    // 1. Update Counts
+    document.getElementById('wordCount').textContent = words;
+    document.getElementById('lineCount').textContent = lines;
+    
+    // 2. Calculate Reading Time (avg 200 wpm for prose, slower for poetry)
+    const readTime = Math.ceil(words / 130); 
+    
+    // 3. Syllable Est. (Rough Approximation)
+    const syllables = Math.round(words * 1.5); // avg syllables per word
+    const avgSyl = lines > 0 ? (syllables / lines).toFixed(1) : 0;
+    document.getElementById('avgSyllables').textContent = avgSyl;
+
+    // 4. Luxury Tone Analysis (Simulated)
+    // We alternate colors based on content length to simulate "AI Analysis" visual feedback
+    const tones = [
+        { label: 'Ethereal ✨', color: 'text-purple-400' },
+        { label: 'Somber 🌑', color: 'text-gray-400' },
+        { label: 'Gilded 🏆', color: 'text-yellow-400' },
+        { label: 'Vivid 🔥', color: 'text-red-400' }
+    ];
+    
+    // Hash the text length to pick a stable tone (simulated)
+    const toneIndex = text.length % tones.length;
+    const toneEl = document.getElementById('predictedTone');
+    
+    toneEl.textContent = tones[toneIndex].label;
+    // Remove old color classes and add the new one
+    toneEl.className = `font-medium transition-colors duration-500 ${tones[toneIndex].color}`;
 }
 
 function autosave() {
