@@ -1,0 +1,15 @@
+{
+    "name": "ChromaLex Studio",
+    "short_name": "ChromaLex",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#F3F4F6",
+    "theme_color": "#F3F4F6",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
+        }
+    ]
+}
