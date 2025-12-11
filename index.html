@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ChromaLex Studio</title>
+    <title>ChromaLex | Magnate Edition</title>
     
     <meta name="theme-color" content="#020202">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,8 +15,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700&family=Lato:wght@400;700&family=Merriweather:wght@300;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,700&family=Lato:wght@400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles/main.css">
 </head>
 
@@ -25,239 +26,133 @@
     <canvas id="dustCanvas" class="fixed inset-0 pointer-events-none z-0 opacity-30"></canvas>
     <div id="drawerOverlay" onclick="toggleDrawer()"></div>
 
-    <div id="sidebar">
-        <div class="p-6 flex justify-between items-center border-b border-white/10 shrink-0">
-            <h1 class="text-xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-600 tracking-widest">CHROMALEX</h1>
-            <button onclick="toggleDrawer()" class="text-gray-400 hover:text-white">✕</button>
-        </div>
-
-        <div class="flex-grow overflow-y-auto custom-scrollbar px-4 py-4 space-y-6">
-            
-            <div id="dailyQuote" class="text-[10px] text-gray-400 font-serif italic text-center border-b border-white/5 pb-4">
-                "Loading inspiration..."
+    <div id="app-grid" class="relative z-10 w-full h-full flex flex-col md:flex-row overflow-hidden">
+        
+        <aside id="sidebar" class="w-full md:w-64 bg-black/90 md:bg-transparent border-r border-white/10 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-300 absolute md:relative z-30 h-full backdrop-blur-xl">
+            <div class="p-5 border-b border-white/10 flex justify-between items-center">
+                <h1 class="text-xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-600 tracking-widest">CHROMALEX</h1>
+                <button onclick="toggleDrawer()" class="md:hidden text-gray-400">✕</button>
             </div>
+            
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-4 space-y-6">
+                <div id="dailyQuote" class="text-[10px] text-gray-400 font-serif italic text-center border-b border-white/5 pb-4">"Loading..."</div>
 
-            <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center gap-4 cursor-pointer hover:bg-white/10 transition" onclick="editDailyGoal()">
-                <div class="relative w-10 h-10 flex items-center justify-center">
-                    <svg class="w-full h-full transform -rotate-90">
-                        <circle cx="20" cy="20" r="16" stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none"></circle>
-                        <circle id="goalRing" cx="20" cy="20" r="16" stroke="#ffdb4d" stroke-width="3" fill="none" stroke-dasharray="100" stroke-dashoffset="100" class="transition-all duration-500"></circle>
-                    </svg>
-                    <span class="absolute text-[8px] font-bold text-gray-300">GOAL</span>
-                </div>
                 <div>
-                    <div class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Daily Target</div>
-                    <div class="text-xs font-bold text-yellow-400"><span id="goalCurrent">0</span> / <span id="goalTarget">500</span></div>
+                    <div class="flex justify-between text-[10px] uppercase font-bold text-gray-500 mb-2 px-1">
+                        <span>Manuscript</span>
+                        <button onclick="addChapter()" class="hover:text-yellow-500 text-lg leading-none">+</button>
+                    </div>
+                    <div id="fileTree" class="space-y-1"></div>
+                </div>
+
+                <div class="pt-4 border-t border-white/10 space-y-1">
+                    <button onclick="openView('commerce')" class="nav-btn">🛍️ Store Manager</button>
+                    <button onclick="openView('design')" class="nav-btn">🎨 Typesetter</button>
+                    <button onclick="openSettings()" class="nav-btn">⚙️ Settings</button>
                 </div>
             </div>
+        </aside>
 
-            <div>
-                <div class="flex justify-between items-center mb-2 px-1">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-yellow-600">Manuscript</span>
-                    <button onclick="addStructureItem('folder')" class="text-xs text-gray-500 hover:text-white" title="Add Chapter">＋</button>
-                </div>
-                <div id="fileTree" class="space-y-1"></div>
-            </div>
-
-            <div>
-                <div class="flex justify-between items-center mb-2 px-1 mt-6 border-t border-white/5 pt-4">
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-purple-400">The Vault</span>
-                    <button onclick="createDraft()" class="text-xs text-gray-500 hover:text-white" title="New Draft">＋</button>
-                </div>
-                <div id="draftsList" class="space-y-1"></div>
-            </div>
-
-            <div class="border-t border-white/10 pt-4 mt-4 space-y-1">
-                <button onclick="toggleDrawer(); switchTab('nexus')" class="w-full text-left p-2 rounded hover:bg-white/5 text-xs text-gray-400 flex gap-2 items-center"><span>🔮</span> The Nexus</button>
-                <button onclick="toggleDrawer(); switchTab('store')" class="w-full text-left p-2 rounded hover:bg-white/5 text-xs text-gray-400 flex gap-2 items-center"><span>🛍️</span> Commerce</button>
-                <button onclick="toggleDrawer(); switchTab('architect')" class="w-full text-left p-2 rounded hover:bg-white/5 text-xs text-gray-400 flex gap-2 items-center"><span>🏗️</span> Cover & Legal</button>
-                <button onclick="toggleDrawer(); switchTab('design')" class="w-full text-left p-2 rounded hover:bg-white/5 text-xs text-gray-400 flex gap-2 items-center"><span>🎨</span> Typesetter</button>
-                <button onclick="toggleDrawer(); showSettingsModal()" class="w-full text-left p-2 rounded hover:bg-white/5 text-xs text-gray-400 flex gap-2 items-center"><span>⚙️</span> Settings</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="mainContent">
-        <header class="h-16 flex items-center justify-between px-6 border-b border-white/10 bg-black/60 backdrop-blur-md z-30 shrink-0">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleDrawer()" class="p-2 text-yellow-400 hover:bg-white/10 rounded-lg transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
-                <div class="flex flex-col">
-                    <h2 id="currentTabTitle" class="text-lg font-bold text-white tracking-wide leading-none">Writing Desk</h2>
-                    <span id="currentDocLabel" class="text-[10px] text-gray-500 uppercase tracking-widest">No Document Selected</span>
-                </div>
-            </div>
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSound()" class="p-2 text-gray-400 hover:text-yellow-400 transition" title="Sound FX">🔊</button>
-                <button onclick="toggleTheme()" class="p-2 text-gray-400 hover:text-yellow-400 transition" title="Theme">◑</button>
-                <button onclick="openArtStudio()" class="hidden sm:inline-flex glass-button px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider uppercase text-purple-400 border-purple-500/30 hover:bg-purple-500/20">Art ✨</button>
-                <button onclick="saveVersion()" class="glass-button px-4 py-2 rounded-lg text-xs font-bold tracking-widest uppercase border-white/20">Save</button>
-            </div>
-        </header>
-
-        <div class="flex-grow relative overflow-hidden bg-black/20">
+        <main class="flex-grow flex flex-col relative h-full bg-black/20">
             
-            <div id="content-write" class="tab-content h-full p-0" style="display: block;">
-                <div class="h-full flex flex-col relative">
-                    <div class="p-6 pb-2 shrink-0">
-                        <input type="text" id="poemTitle" class="bg-transparent text-3xl font-bold text-white placeholder-gray-700 focus:outline-none w-full border-none shadow-none p-0 font-serif" placeholder="Untitled">
+            <div class="h-14 border-b border-white/10 flex items-center justify-between px-4 md:px-6 bg-black/40 backdrop-blur-sm z-20">
+                <div class="flex gap-4 items-center">
+                    <button onclick="toggleDrawer()" class="md:hidden text-yellow-500">☰</button>
+                    <span id="activeDocLabel" class="text-xs font-bold text-gray-500 uppercase tracking-widest truncate max-w-[150px]">No Selection</span>
+                    
+                    <div class="hidden md:flex gap-2 ml-4 border-l border-white/10 pl-4">
+                        <button onclick="toggleTypewriter()" id="btnTypewriter" class="icon-btn" title="Typewriter Mode">📜</button>
+                        <button onclick="toggleZen()" id="btnZen" class="icon-btn" title="Zen Mode">🧘</button>
+                        <button onclick="toggleLens()" id="btnLens" class="icon-btn" title="Syntax Lens (X-Ray)">👁️</button>
                     </div>
-                    <div class="flex-grow relative overflow-hidden" id="editorContainer">
-                        <textarea 
-                            id="poemContent" 
-                            class="absolute inset-0 w-full h-full p-6 md:p-12 custom-scrollbar text-lg md:text-xl leading-loose text-gray-200 placeholder-gray-800 resize-none outline-none bg-transparent font-serif" 
-                            placeholder="Start writing..."
-                            spellcheck="true"
-                            autocorrect="on"
-                            autocapitalize="sentences"
-                            enterkeyhint="enter"></textarea>
-                    </div>
-                    <div class="p-3 bg-black/80 border-t border-white/10 flex justify-between text-xs text-gray-500 shrink-0 font-medium z-20">
-                        <span class="flex gap-4">
-                            <span>Words: <span id="wordCount" class="text-white">0</span></span>
-                            <span>Time: <span id="readTime" class="text-white">0m</span></span>
-                        </span>
-                        <div class="flex gap-2">
-                            <button onclick="toggleTypewriterMode()" id="typewriterBtn" class="hover:text-yellow-400" title="Center Focus">📜 Typewriter</button>
-                            <button onclick="runCriticAnalysis()" class="hover:text-red-400 flex items-center gap-1"><span>🧐</span> Analyze</button>
-                        </div>
-                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="toggleSound()" class="icon-btn" title="Sound">🔊</button>
+                    <button onclick="toggleTheme()" class="icon-btn" title="Theme">◑</button>
+                    <button onclick="toggleInspector()" class="icon-btn text-purple-400 border-purple-500/30 px-3 flex items-center gap-2"><span>🗂️</span> <span class="hidden md:inline">Inspector</span></button>
                 </div>
             </div>
 
-            <div id="content-nexus" class="tab-content hidden h-full p-6">
-                <div class="glass-panel h-full flex flex-col p-6">
-                    <div class="flex flex-col gap-4 mb-6 shrink-0 border-b border-white/10 pb-6">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-blue-400 to-teal-400 font-serif">The Nexus</h3>
-                                <p class="text-xs text-gray-400">Creative Engine & Archive</p>
-                            </div>
-                            <div class="flex bg-white/5 p-1 rounded-lg border border-white/10">
-                                <button onclick="setNexusMode('idea')" id="modeBtn-idea" class="px-3 py-1.5 rounded text-xs font-bold text-purple-300 bg-white/10 transition">✨ Idea</button>
-                                <button onclick="setNexusMode('research')" id="modeBtn-research" class="px-3 py-1.5 rounded text-xs font-bold text-gray-500 hover:text-blue-300 transition">🦉 Research</button>
-                                <button onclick="setNexusMode('prism')" id="modeBtn-prism" class="px-3 py-1.5 rounded text-xs font-bold text-gray-500 hover:text-teal-300 transition">💎 Prism</button>
-                            </div>
-                        </div>
-                        <div class="relative group">
-                            <div class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur"></div>
-                            <div class="relative flex gap-2">
-                                <input id="nexusInput" class="flex-grow p-4 bg-black border border-white/10 rounded-xl text-sm text-white focus:outline-none placeholder-gray-600 font-serif" placeholder="Plant a seed...">
-                                <button onclick="executeNexusAction()" id="nexusActionBtn" class="px-6 bg-purple-600/20 text-purple-300 border border-purple-500/50 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-purple-600 hover:text-white transition shadow-lg">Plant</button>
-                            </div>
-                        </div>
-                        <p id="nexusHint" class="text-[10px] text-gray-500 text-center italic">"Enter a concept..."</p>
-                    </div>
-                    <div id="nexusGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto custom-scrollbar flex-grow pb-20"></div>
+            <div class="flex-grow relative overflow-hidden" id="editorWrapper">
+                
+                <div id="content-write" class="tab-content h-full w-full absolute inset-0 block">
+                    <textarea id="editor" class="absolute inset-0 w-full h-full p-8 md:p-16 custom-scrollbar text-lg md:text-xl leading-loose text-gray-200 placeholder-gray-700 bg-transparent resize-none outline-none font-serif z-10 transition-all duration-300" placeholder="Select a page to begin..." spellcheck="true" autocorrect="on" autocapitalize="sentences"></textarea>
+                    
+                    <div id="editorOverlay" class="absolute inset-0 w-full h-full p-8 md:p-16 custom-scrollbar text-lg md:text-xl leading-loose font-serif pointer-events-none z-20 hidden whitespace-pre-wrap text-transparent bg-black/95 backdrop-blur-sm transition-all duration-300"></div>
                 </div>
+
+                <div id="content-mosaic" class="tab-content h-full w-full absolute inset-0 hidden bg-black/60 p-8 overflow-y-auto custom-scrollbar backdrop-blur-md">
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-2xl font-serif text-yellow-500">The Mosaic</h2>
+                        <button onclick="switchTab('write')" class="text-gray-400 hover:text-white text-sm uppercase tracking-widest">Back to Editor</button>
+                    </div>
+                    <div id="mosaicGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+                </div>
+
             </div>
 
-            <div id="content-architect" class="tab-content hidden h-full p-6 flex items-center justify-center">
-                <div class="glass-panel p-8 max-w-md w-full">
-                    <h3 class="text-xl font-bold text-yellow-500 mb-6">Cover Art</h3>
-                    <div id="coverCanvas" class="w-full aspect-[2/3] bg-[#1a1a1a] relative shadow-2xl overflow-hidden border border-white/5 mb-4 group">
-                        <img id="coverBgImage" class="absolute inset-0 w-full h-full object-cover opacity-50 pointer-events-none">
-                        <div id="coverTitle" class="absolute top-10 w-full text-center text-2xl font-serif text-white font-bold cursor-move p-2 border border-transparent hover:border-dashed hover:border-yellow-500 select-none" onmousedown="startDrag(event, this)">Title</div>
-                        <div id="coverAuthor" class="absolute bottom-10 w-full text-center text-xs font-sans text-yellow-500 tracking-widest uppercase cursor-move p-2 border border-transparent hover:border-dashed hover:border-yellow-500 select-none" onmousedown="startDrag(event, this)">Author</div>
-                    </div>
-                    <label class="glass-button w-full py-3 text-center text-xs cursor-pointer hover:text-yellow-500">
-                        🖼️ Change Image <input type="file" class="hidden" onchange="uploadCoverImage(this)">
-                    </label>
+            <div class="h-8 border-t border-white/10 bg-black/80 flex justify-between items-center px-4 text-[10px] text-gray-500 font-mono z-20">
+                <div class="flex gap-4">
+                    <span id="wordCount">0 words</span>
+                    <span id="lensStatus" class="hidden text-purple-400 font-bold">LENS ACTIVE</span>
                 </div>
+                <div class="flex gap-2 items-center">
+                    <span id="saveStatus" class="opacity-0 transition-opacity text-green-500">SAVED</span>
+                    <div id="pulseLight" class="w-1.5 h-1.5 rounded-full bg-gray-800 transition-colors duration-200"></div>
+                </div>
+            </div>
+        </main>
+
+        <aside id="inspector" class="w-full md:w-80 bg-black/95 border-l border-white/10 flex flex-col transform translate-x-full md:translate-x-0 transition-transform duration-300 absolute md:relative z-30 h-full backdrop-blur-xl">
+            <div class="flex border-b border-white/10 text-[10px] font-bold uppercase tracking-widest text-gray-500 bg-black/40">
+                <button onclick="setInspectorTab('oracle')" id="tab-oracle" class="flex-1 py-3 hover:text-white transition text-purple-400 border-b-2 border-purple-500">Oracle</button>
+                <button onclick="setInspectorTab('notes')" id="tab-notes" class="flex-1 py-3 hover:text-white transition">Notes</button>
+                <button onclick="setInspectorTab('ideas')" id="tab-ideas" class="flex-1 py-3 hover:text-white transition">Ideas</button>
             </div>
 
-            <div id="content-store" class="tab-content hidden h-full p-6">
-                <div class="glass-panel h-full p-6 flex flex-col">
-                    <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-                        <h3 class="text-2xl font-bold text-yellow-500">Commerce</h3>
-                        <button onclick="refreshStoreList()" class="text-gray-400 hover:text-white text-xs">↻ Refresh</button>
+            <div class="flex-grow overflow-y-auto custom-scrollbar p-4 relative">
+                <div id="insp-oracle" class="inspector-pane space-y-4">
+                    <div class="relative">
+                        <input id="oracleInput" type="text" class="w-full bg-white/5 border border-purple-500/30 rounded-lg p-3 text-sm text-white focus:border-purple-500 outline-none placeholder-gray-600" placeholder="Ask the AI...">
+                        <button onclick="askOracle()" class="absolute right-2 top-2 p-1 text-purple-400 hover:text-white">➤</button>
                     </div>
-                    <div id="adminProductList" class="flex-grow overflow-y-auto custom-scrollbar space-y-3"></div>
-                    <div class="mt-4 pt-4 border-t border-white/10 p-4 bg-white/5 rounded-xl">
-                        <h4 class="text-xs font-bold text-white mb-2 uppercase">Publish Product</h4>
-                        <div class="grid grid-cols-2 gap-2 mb-2">
-                            <input id="prodTitle" class="p-2 bg-black/50 border border-gray-700 rounded text-xs text-white" placeholder="Title">
-                            <input id="prodPrice" type="number" class="p-2 bg-black/50 border border-gray-700 rounded text-xs text-white" placeholder="Price">
-                            <input id="prodImage" class="p-2 bg-black/50 border border-gray-700 rounded text-xs text-white" placeholder="Image URL">
-                            <input id="prodLink" class="p-2 bg-black/50 border border-gray-700 rounded text-xs text-white" placeholder="Square Link">
-                        </div>
-                        <button onclick="saveProductToCloud()" class="w-full py-2 bg-yellow-600 text-black font-bold rounded text-xs hover:bg-yellow-500">Publish</button>
+                    <div id="oracleResult" class="hidden glass-panel p-4 border-l-2 border-purple-500 relative">
+                        <button onclick="clipToNotes()" class="absolute top-2 right-2 text-[10px] text-gray-500 hover:text-white">CLIP</button>
+                        <p id="oracleText" class="text-sm text-gray-300 font-serif leading-relaxed"></p>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="quickOracle('synonym')" class="oracle-tool-btn">Synonyms</button>
+                        <button onclick="quickOracle('rhyme')" class="oracle-tool-btn">Rhymes</button>
+                        <button onclick="quickOracle('etymology')" class="oracle-tool-btn">Roots</button>
+                        <button onclick="quickOracle('sensory')" class="oracle-tool-btn">Senses</button>
                     </div>
                 </div>
-            </div>
 
-            <div id="content-design" class="tab-content hidden h-full p-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-                    <div class="lg:col-span-2 bg-black/40 rounded-xl border border-white/10 flex items-center justify-center p-8 overflow-hidden relative group">
-                        <div id="bookPreviewPage" class="book-page-simulation paper-cream transition-all duration-500 shadow-2xl origin-center transform scale-90 lg:scale-100">
-                            <div id="previewContent" class="h-full flex flex-col">
-                                <h2 id="previewHeader" class="text-3xl font-bold text-center mb-8 text-black mt-12 transition-all">The Title</h2>
-                                <div id="previewBodyText" class="text-lg text-black leading-relaxed whitespace-pre-wrap transition-all flex-grow">Text...</div>
-                                <div id="previewDivider" class="text-black text-center my-8 opacity-50">***</div>
-                                <p class="text-center mt-auto mb-8 opacity-40 text-black text-xs">1</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-1 glass-panel p-6 flex flex-col overflow-y-auto custom-scrollbar">
-                        <h3 class="text-xl font-bold text-yellow-500 mb-6 font-serif border-b border-white/10 pb-4">Typesetting Studio</h3>
-                        <div class="space-y-4 mb-8">
-                            <div>
-                                <label class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1 block">Paper</label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="setPaper('paper-white')" class="h-8 rounded border border-gray-300 bg-white hover:ring-2 ring-yellow-500 transition"></button>
-                                    <button onclick="setPaper('paper-cream')" class="h-8 rounded border border-orange-100 bg-[#fdfbf7] hover:ring-2 ring-yellow-500 transition"></button>
-                                    <button onclick="setPaper('paper-parchment')" class="h-8 rounded border border-yellow-200 bg-[#f3e5ab] hover:ring-2 ring-yellow-500 transition"></button>
-                                </div>
-                            </div>
-                            <div>
-                                <label class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1 block">Fonts</label>
-                                <select id="headerFontSelect" onchange="updateDesign()" class="w-full p-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white mb-2"><option value="'Cinzel', serif">Cinzel</option><option value="'Playfair Display', serif">Playfair</option></select>
-                                <select id="bodyFontSelect" onchange="updateDesign()" class="w-full p-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white"><option value="'Cormorant Garamond', serif">Cormorant</option><option value="'Lato', sans-serif">Lato</option></select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div><label class="text-xs text-gray-400 font-bold mb-1 block">Size</label><input type="number" id="baseFontSize" value="12" onchange="updateDesign()" class="w-full p-2 bg-white/5 border border-white/10 rounded text-sm text-white"></div>
-                                <div><label class="text-xs text-gray-400 font-bold mb-1 block">Lead</label><input type="number" id="baseLineHeight" value="1.6" step="0.1" onchange="updateDesign()" class="w-full p-2 bg-white/5 border border-white/10 rounded text-sm text-white"></div>
-                            </div>
-                        </div>
-                        <button onclick="generateStyledBook()" class="mt-auto w-full py-3 bg-gradient-to-r from-yellow-600 to-yellow-500 text-black font-bold tracking-widest uppercase rounded-xl">Export HTML</button>
-                    </div>
+                <div id="insp-notes" class="inspector-pane hidden space-y-2">
+                    <div id="researchList" class="space-y-2"></div>
+                </div>
+
+                <div id="insp-ideas" class="inspector-pane hidden space-y-2">
+                    <div class="flex gap-2 mb-2"><input id="ideaInput" class="w-full bg-white/5 border border-white/10 rounded p-2 text-xs text-white" placeholder="New Idea"><button onclick="addIdea()" class="text-xs bg-white/10 px-2 rounded hover:text-green-400">＋</button></div>
+                    <div id="ideaList" class="space-y-2"></div>
                 </div>
             </div>
-        </div>
+        </aside>
     </div>
 
-    <div id="contextMenu" class="hidden fixed z-[200] bg-black/95 border border-yellow-500/30 rounded-lg shadow-2xl w-48 backdrop-blur-xl py-1 transform transition-all duration-100 origin-top-left">
-        <button onclick="contextAction('rename')" class="w-full text-left px-4 py-3 text-xs text-gray-300 hover:bg-white/10 hover:text-white flex gap-2"><span>✏️</span> Rename</button>
-        <button onclick="contextAction('add_page')" class="w-full text-left px-4 py-3 text-xs text-gray-300 hover:bg-white/10 hover:text-white flex gap-2"><span>📄</span> Add Page</button>
-        <button onclick="contextAction('add_chapter')" class="w-full text-left px-4 py-3 text-xs text-gray-300 hover:bg-white/10 hover:text-white flex gap-2"><span>📂</span> Add Chapter</button>
-        <div class="border-t border-white/10 my-1"></div>
-        <button onclick="contextAction('delete')" class="w-full text-left px-4 py-3 text-xs text-red-400 hover:bg-red-900/20 flex gap-2"><span>🗑️</span> Delete</button>
-    </div>
-
-    <div id="artModal" class="modal fixed inset-0 z-[400] hidden justify-center items-center backdrop-blur-md bg-black/90">
-        <div class="w-full max-w-lg p-6 glass-panel flex flex-col gap-4">
-            <div class="flex justify-between items-center"><h3 class="text-lg font-bold text-purple-400">Art Studio</h3><button onclick="closeArtStudio()" class="text-gray-500 hover:text-white">✕</button></div>
-            <div class="flex justify-center bg-black/50 p-4 rounded-xl"><div id="artStage" class="w-[250px] h-[350px] relative overflow-hidden bg-black flex flex-col items-center justify-center p-4 text-center shadow-2xl border border-white/10"><div id="artBackground" class="absolute inset-0 z-0"></div><div class="relative z-10"><h2 id="artTitle" class="font-serif text-xl text-yellow-500 mb-2">Title</h2><p id="artContent" class="font-serif text-[10px] text-gray-200 line-clamp-6">Content...</p></div></div></div>
-            <div class="grid grid-cols-2 gap-2"><button onclick="generateBackground('nebula')" class="p-2 bg-purple-900/30 border border-purple-500/30 rounded text-xs text-purple-300">Nebula</button><button onclick="generateBackground('obsidian')" class="p-2 bg-yellow-900/30 border border-yellow-500/30 rounded text-xs text-yellow-300">Obsidian</button></div>
-            <button onclick="downloadArt()" class="w-full py-2 bg-green-600/30 border border-green-500/30 text-green-400 text-xs font-bold rounded">Download</button>
-        </div>
-    </div>
-
-    <div id="criticModal" class="modal fixed inset-0 z-[300] hidden justify-center items-center backdrop-blur-md bg-black/80" onclick="closeCritic()">
-        <div class="w-full max-w-lg p-8 glass-panel border border-red-500/20" onclick="event.stopPropagation()">
-            <h3 class="text-xl font-bold text-red-400 mb-4 font-serif">The Critic's Report</h3>
-            <div id="criticReport" class="text-sm text-gray-300 whitespace-pre-wrap leading-relaxed max-h-[60vh] overflow-y-auto"></div>
-            <button onclick="closeCritic()" class="mt-6 w-full py-3 bg-white/5 hover:bg-white/10 rounded text-xs uppercase tracking-widest">Dismiss</button>
-        </div>
-    </div>
-
-    <div id="settingsModal" class="modal fixed inset-0 z-[300] hidden justify-center items-center"><div class="w-full max-w-lg p-6 glass-panel"><h3 class="text-xl text-yellow-500 mb-4">Settings</h3><input id="geminiKey" type="password" class="w-full mb-4 p-3 bg-black/50 border border-gray-700 rounded text-gray-300" placeholder="Gemini API Key"><input id="googleScriptUrl" class="w-full mb-4 p-3 bg-black/50 border border-gray-700 rounded text-gray-300" placeholder="Google Sheet API URL"><button onclick="saveSettings()" class="w-full py-2 bg-yellow-600 text-black font-bold rounded">Save</button><button onclick="closeSettingsModal()" class="absolute top-4 right-4 text-gray-500">✕</button></div></div>
+    <div id="viewOverlay" class="fixed inset-0 z-50 bg-black/95 hidden flex-col"><div class="h-16 border-b border-white/10 flex justify-between items-center px-6"><h2 id="viewTitle" class="text-xl font-serif text-yellow-500">Manager</h2><button onclick="closeView()" class="text-2xl text-gray-500 hover:text-white">✕</button></div><div id="viewContent" class="flex-grow overflow-y-auto p-6 custom-scrollbar"></div></div>
     
-    <div id="toast" class="fixed top-24 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-black border border-yellow-500 text-yellow-500 text-sm rounded-full shadow-2xl z-[500] opacity-0 transition-all duration-300 pointer-events-none font-bold tracking-wide scale-90"></div>
-
-    <div id="socialExportStage" class="hidden"></div>
-    <div id="museMenu" class="hidden absolute glass-panel p-1 flex-row gap-1 z-[200] border border-gray-700 bg-black/90"><button onclick="museAction('synonym')" class="px-2 py-1 text-xs text-purple-300 hover:bg-white/20">Synonym</button><button onclick="museAction('rhyme')" class="px-2 py-1 text-xs text-pink-300 hover:bg-white/20">Rhyme</button></div>
+    <div id="toast" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 px-8 py-3 bg-black/90 border border-yellow-500 text-yellow-500 text-xs rounded-full shadow-2xl z-[100] opacity-0 transition-all pointer-events-none font-bold tracking-widest scale-90"></div>
+    
+    <div id="ctxMenu" class="hidden fixed z-[200] bg-[#111] border border-white/10 rounded-xl shadow-2xl w-48 py-1 transform origin-top-left transition-transform duration-200 scale-95 opacity-0">
+        <button onclick="ctxAction('rename')" class="ctx-btn">✏️ Rename</button>
+        <button onclick="ctxAction('add_page')" class="ctx-btn">📄 Add Page</button>
+        <button onclick="ctxAction('open_mosaic')" class="ctx-btn text-yellow-500">📌 Mosaic View</button>
+        <div class="border-t border-white/10 my-1"></div>
+        <button onclick="ctxAction('delete')" class="ctx-btn text-red-400 hover:bg-red-900/10">🗑️ Delete</button>
+    </div>
 
     <script src="js/app.js"></script>
-    <script>function toggleDrawer() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('drawerOverlay').classList.toggle('active'); } if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); }); }</script>
+    <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');</script>
 </body>
 </html>
