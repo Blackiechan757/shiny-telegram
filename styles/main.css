@@ -1,0 +1,112 @@
+/* =========================================================
+   CHROMA-LEX GLOBAL AND RESPONSIVE CSS
+   (Previously in index.html <style> block)
+   ========================================================= */
+
+/* Global Font and Body Setup */
+body {
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    background-color: #f7f9fb;
+    color: #333;
+}
+
+/* Modal Base Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+.modal.active {
+    display: flex;
+}
+/* Ensures modal content takes up majority of screen on mobile */
+.modal > div {
+    max-width: 95%; 
+    max-height: 95vh;
+    overflow-y: auto;
+}
+
+/* Sidebar Toggle Logic (Mobile First) */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 50;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+}
+#sidebar.open {
+    transform: translateX(0);
+}
+
+/* Main Content Padding/Shifting for Mobile */
+#mainContent {
+    transition: margin-left 0.3s ease-in-out;
+}
+
+/* Desktop Styles (lg breakpoint) */
+@media (min-width: 1024px) {
+    #sidebar {
+        transform: translateX(0);
+        position: sticky;
+    }
+    #mainContent {
+        margin-left: 250px; 
+    }
+}
+
+/* Mobile Overlay */
+#mobileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 40;
+    display: none;
+}
+
+/* Tab Styles */
+.tab-btn {
+    border-bottom: 2px solid transparent;
+    padding-bottom: 0.5rem;
+    transition: all 0.2s;
+}
+.tab-active {
+    border-color: #5b21b6; /* deep purple */
+    color: #5b21b6;
+    font-weight: 600;
+}
+.tab-content {
+    display: none;
+}
+
+/* Toast Notification */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #10b981;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+#toast.active {
+    opacity: 1;
+}
